@@ -11,8 +11,20 @@ Each agent is a self-contained, deployable solution that follows a common patter
 
 | Domain | Agent | Description | Status |
 |---|---|---|---|
-| **Health** | [AWS Health Notification Agent](health/aws-health-notification-agent/) | Classifies AWS Health Dashboard notifications, performs cross-account impact analysis, creates Jira tickets, and optionally executes approved remediation | Available |
-| **Health** | [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) | Triages AWS Health events across an entire AWS Organization — classifies, enriches, routes, and escalates them using the Health organizational view, Amazon Bedrock, and the AWS DevOps Agent | Available |
+| **Health** | [AWS Health Notification Agent](health/aws-health-notification-agent/) | **Legacy: superseded by the [Event Triage Agent](health/aws-health-event-triage-agent/) for organization-wide use; no longer maintained.** Classifies AWS Health Dashboard notifications (single account, or multi-account via AHA), performs cross-account impact analysis, creates Jira tickets, and optionally executes approved remediation | Legacy |
+| **Health** | [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) | Triages AWS Health events across an entire AWS Organization using the Health organizational view — consolidates per-account messages into one record per event, classifies with Amazon Bedrock, routes by team, and optionally runs an AWS DevOps Agent investigation. Read-only by default | Available |
+
+### Choosing a Health agent
+
+The two Health agents take different approaches and deploy independently. The Notification Agent is legacy and no longer maintained; use the Event Triage Agent for new, organization-wide deployments. The Notification Agent stays in the repository for existing users.
+
+| | [Notification Agent](health/aws-health-notification-agent/) | [Event Triage Agent](health/aws-health-event-triage-agent/) |
+|---|---|---|
+| Event source | Native `aws.health` events (single account), or [AWS Health Aware (AHA)](https://github.com/aws-samples/aws-health-aware) for multi-account | AWS Health organizational view, delivered natively to EventBridge |
+| Best for | Existing single-account or AHA deployments | Organization-wide triage with one record and one ticket per event |
+| Runtime | Bedrock AgentCore Runtime + Lambda | AWS Step Functions + Lambda |
+| Deployment | CloudFormation (`./deploy.sh`) | AWS CDK (`cdk deploy --all`) |
+| Write access | Read-only by default; remediation is optional and runs only after human approval | Read-only by default; write actions are opt-in (see its `MUTATING_ACTIONS.md`) |
 | **Observability** | [MIO Agent](observability/mio-agent/) | Continuously assesses monitoring and observability posture, scores maturity across 5 dimensions, and generates prioritized gap reports with implementation-ready fixes | Available |
 | **Cloud Governance** | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | Explains Amazon Bedrock usage, compares utilization against TPM/RPM quotas, and drafts or submits quota increase requests — via CLI or Slack | Available |
 | **Cloud Governance** | [DART Agent](governance/dart-agent/) | Pre-flight check for LLM fine-tuning datasets — profiles schema, detects duplicates, scans for PII, projects training cost, and returns a GO / NO-GO / GO WITH FIXES verdict with an auditable trail | Available |
@@ -139,11 +151,11 @@ curl -sL https://github.com/aws-samples/sample-ai-agents-for-operations/tarball/
 
 This leaves the agent's contents in the current directory. Note that you cannot pull updates or tell which commit you are on, so prefer the sparse checkout for anything you plan to keep.
 
-Start with the [AWS Health Notification Agent](health/aws-health-notification-agent/) — it demonstrates the full pattern including classification, impact analysis, multi-channel notifications, and human-approved remediation. If you want a read-only agent to evaluate first, the [MIO Agent](observability/mio-agent/) never requests write permissions.
+Start with the [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) — it demonstrates the full pattern including classification, impact enrichment, team routing, multi-channel notifications, and optional DevOps Agent investigation, and it is read-only against your accounts by default. If you want a read-only agent to evaluate first, the [MIO Agent](observability/mio-agent/) never requests write permissions.
 
 ## Customise with Kiro IDE
 
-These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), and [DART Agent](governance/dart-agent/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
+These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/), [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), and [DART Agent](governance/dart-agent/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
 
 ```
 <agent>/.kiro/specs/
