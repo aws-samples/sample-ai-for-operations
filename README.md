@@ -13,6 +13,12 @@ Each agent is a self-contained, deployable solution that follows a common patter
 |---|---|---|---|
 | **Health** | [AWS Health Notification Agent](health/aws-health-notification-agent/) | **Legacy: superseded by the [Event Triage Agent](health/aws-health-event-triage-agent/) for organization-wide use; no longer maintained.** Classifies AWS Health Dashboard notifications (single account, or multi-account via AHA), performs cross-account impact analysis, creates Jira tickets, and optionally executes approved remediation | Legacy |
 | **Health** | [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) | Triages AWS Health events across an entire AWS Organization using the Health organizational view — consolidates per-account messages into one record per event, classifies with Amazon Bedrock, routes by team, and optionally runs an AWS DevOps Agent investigation. Read-only by default | Available |
+| **Observability** | [MIO Agent](observability/mio-agent/) | Continuously assesses monitoring and observability posture, scores maturity across 5 dimensions, and generates prioritized gap reports with implementation-ready fixes | Available |
+| **Cloud Governance** | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | Explains Amazon Bedrock usage, compares utilization against TPM/RPM quotas, and drafts or submits quota increase requests — via CLI or Slack | Available |
+| **Cloud Governance** | [DART Agent](governance/dart-agent/) | Pre-flight check for LLM fine-tuning datasets — profiles schema, detects duplicates, scans for PII, projects training cost, and returns a GO / NO-GO / GO WITH FIXES verdict with an auditable trail | Available |
+| **Cost Optimization** | _Coming soon_ | Identifies misconfigured architectures and underutilized resources, suggests optimization plans | Planned |
+| **Resiliency** | _Coming soon_ | Monitors resilience posture, recommends failover actions, validates recovery procedures | Planned |
+| **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
 
 ### Choosing a Health agent
 
@@ -25,12 +31,6 @@ The two Health agents take different approaches and deploy independently. The No
 | Runtime | Bedrock AgentCore Runtime + Lambda | AWS Step Functions + Lambda |
 | Deployment | CloudFormation (`./deploy.sh`) | AWS CDK (`cdk deploy --all`) |
 | Write access | Read-only by default; remediation is optional and runs only after human approval | Read-only by default; write actions are opt-in (see its `MUTATING_ACTIONS.md`) |
-| **Observability** | [MIO Agent](observability/mio-agent/) | Continuously assesses monitoring and observability posture, scores maturity across 5 dimensions, and generates prioritized gap reports with implementation-ready fixes | Available |
-| **Cloud Governance** | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | Explains Amazon Bedrock usage, compares utilization against TPM/RPM quotas, and drafts or submits quota increase requests — via CLI or Slack | Available |
-| **Cloud Governance** | [DART Agent](governance/dart-agent/) | Pre-flight check for LLM fine-tuning datasets — profiles schema, detects duplicates, scans for PII, projects training cost, and returns a GO / NO-GO / GO WITH FIXES verdict with an auditable trail | Available |
-| **Cost Optimization** | _Coming soon_ | Identifies misconfigured architectures and underutilized resources, suggests optimization plans | Planned |
-| **Resiliency** | _Coming soon_ | Monitors resilience posture, recommends failover actions, validates recovery procedures | Planned |
-| **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
 
 ## Repository Structure
 
