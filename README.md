@@ -19,7 +19,7 @@ Each agent is a self-contained, deployable solution that follows a common patter
 | **Cost Optimization** | _Coming soon_ | Identifies misconfigured architectures and underutilized resources, suggests optimization plans | Planned |
 | **Resiliency** | _Coming soon_ | Monitors resilience posture, recommends failover actions, validates recovery procedures | Planned |
 | **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
-| **Security** | [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | Read-only CLI that finds the long-lived credentials in an account or organization that can invoke Amazon Bedrock models, and assigns each a risk tier with a recommended action | Available |
+| **Security** | [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | Read-only CLI (no AI agent) that finds the long-lived credentials in an account or organization that can invoke Amazon Bedrock models, and assigns each a risk tier with a recommended action | Available |
 
 ### Choosing a Health agent
 
