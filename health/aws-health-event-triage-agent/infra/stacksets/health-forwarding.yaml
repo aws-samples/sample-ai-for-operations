@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  StackSet A — AWS Health Event Triage Agent.
+  Deploys an EventBridge rule in each enabled Region of the Health admin account
+  (management account or delegated administrator) that forwards aws.health events
+  to the central event bus in the agent account.
+
+  Prerequisites:
+    - The target central bus must exist and have a resource policy that allows
+      events:PutEvents from this account (created by HealthTriageCoreStack).
+    - AWS Health organizational view must be enabled (requires Business/Enterprise
+      Support and a delegated administrator account for the health service).
+
+  Deploy this StackSet to every Region where you have enabled AWS Health events.
+  The us-east-1 Region is MANDATORY (global/PUBLIC scope events arrive there).
+
+Parameters:
+  CentralBusArn:
+    Type: String
+    Description: >
+      ARN of the central EventBridge bus in the agent account
+      (output CentralBusArn from HealthTriageCoreStack).
+    AllowedPattern: "^arn:aws:events:[a-z0-9-]+:[0-9]{12}:event-bus/.+"
+
+  ProjectName:
+    Type: String
+    Default: health-triage
+    Description: Short project name used as a prefix for resource names.
+
+  AgentAccountId:
+    Type: String
+    Description: AWS account ID of the agent account (where the central bus lives).
+    AllowedPattern: "^[0-9]{12}$"
+
+Resources:
+
+  # IAM role that EventBridge assumes to put events on the cross-account bus
+  HealthForwardingRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "Explicit role name required for cross-account EventBridge target policies"
+    Properties:
+      RoleName: !Sub "${ProjectName}-health-forwarding-${AWS::Region}"
+      Description: >
+        Allows EventBridge to forward aws.health events to the central bus
+        in the agent account.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+      Policies:
+        - PolicyName: PutEventsOnCentralBus
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: events:PutEvents
+                # Scope to the specific central bus ARN — no wildcard on resource
+                Resource: !Ref CentralBusArn
+
+  # EventBridge rule: capture all aws.health events in this Region
+  HealthForwardingRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "${ProjectName}-forward-health-events"
+      Description: >
+        Forwards all aws.health events from this Region to the central event bus
+        in the agent account.
+      EventPattern:
+        source:
+          - aws.health
+      State: ENABLED
+      Targets:
+        - Id: CentralBus
+          Arn: !Ref CentralBusArn
+          RoleArn: !GetAtt HealthForwardingRole.Arn
+
+Outputs:
+  ForwardingRuleArn:
+    Value: !GetAtt HealthForwardingRule.Arn
+    Description: ARN of the aws.health forwarding rule in this Region.
+
+  ForwardingRoleArn:
+    Value: !GetAtt HealthForwardingRole.Arn
+    Description: ARN of the IAM role used by EventBridge for cross-account delivery.

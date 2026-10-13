@@ -12,6 +12,7 @@ Each agent is a self-contained, deployable solution that follows a common patter
 | Domain | Agent | Description | Status |
 |---|---|---|---|
 | **Health** | [AWS Health Notification Agent](health/aws-health-notification-agent/) | Classifies AWS Health Dashboard notifications, performs cross-account impact analysis, creates Jira tickets, and optionally executes approved remediation | Available |
+| **Health** | [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) | Triages AWS Health events across an entire AWS Organization — classifies, enriches, routes, and escalates them using the Health organizational view, Amazon Bedrock, and the AWS DevOps Agent | Available |
 | **Observability** | [MIO Agent](observability/mio-agent/) | Continuously assesses monitoring and observability posture, scores maturity across 5 dimensions, and generates prioritized gap reports with implementation-ready fixes | Available |
 | **Cloud Governance** | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | Explains Amazon Bedrock usage, compares utilization against TPM/RPM quotas, and drafts or submits quota increase requests — via CLI or Slack | Available |
 | **Cloud Governance** | [DART Agent](governance/dart-agent/) | Pre-flight check for LLM fine-tuning datasets — profiles schema, detects duplicates, scans for PII, projects training cost, and returns a GO / NO-GO / GO WITH FIXES verdict with an auditable trail | Available |
@@ -24,7 +25,8 @@ Each agent is a self-contained, deployable solution that follows a common patter
 ```
 sample-ai-agents-for-operations/
 ├── health/                          # Health & availability domain
-│   └── aws-health-notification-agent/   # PHD event classification + remediation
+│   ├── aws-health-notification-agent/   # PHD event classification + remediation
+│   └── aws-health-event-triage-agent/   # Organization-wide Health event triage + routing
 ├── observability/                   # Monitoring & observability domain
 │   └── mio-agent/                       # Observability maturity assessment + gap reports
 ├── governance/                      # Cloud governance domain

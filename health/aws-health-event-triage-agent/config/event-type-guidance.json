@@ -1,0 +1,106 @@
+[
+  {
+    "eventTypeCode": "AWS_EKS_PLANNED_LIFECYCLE_EVENT",
+    "knownSemantics": "EKS Kubernetes version end-of-standard-support. Clusters on the affected version will be auto-upgraded after the deadline if not upgraded manually.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["end of standard support", "end of extended support", "auto-upgrade"],
+    "notes": "If the notification mentions extended support pricing only (no forced upgrade yet), consider COST_IMPLICATION.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_EKS_FARGATE_POD_EVICTIONS",
+    "knownSemantics": "AWS is patching the Fargate OS. Pods will be evicted and rescheduled. Workloads with single replicas or blocking PodDisruptionBudgets may experience downtime.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["scheduled maintenance", "patching window"],
+    "notes": "Check for standalone pods, single-replica Deployments, and blocking PDBs (see devops-agent-skill/SKILL.md's E3.2 checks).",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_KAFKA_SECURITY_PATCHING_EVENT",
+    "knownSemantics": "Amazon MSK security patching. Standard brokers will be restarted one at a time. Clusters with topics at replication-factor=min-ISR may lose availability during restart.",
+    "defaultClassHint": "SECURITY_RELATED",
+    "deadlineHints": ["maintenance window", "patching window"],
+    "notes": "Check offline-partition history and replication-factor notices (see devops-agent-skill/SKILL.md's E3.2 checks). Express brokers are exempt.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_RDS_EXTENDED_SUPPORT",
+    "knownSemantics": "RDS DB engine entering extended support. Additional per-vCPU-hour charges apply. Auto-minor-version upgrades continue; major version upgrade requires customer action to exit extended support.",
+    "defaultClassHint": "COST_IMPLICATION",
+    "deadlineHints": ["extended support starts", "charges begin", "end of standard support"],
+    "notes": "If auto-upgrade is involved, reclassify as BREAKING_CHANGE.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_RDS_SECURITY_PATCHING",
+    "knownSemantics": "RDS security patching. DB instance will be restarted during the maintenance window.",
+    "defaultClassHint": "SECURITY_RELATED",
+    "deadlineHints": ["maintenance window"],
+    "notes": "",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_LAMBDA_RUNTIME_DEPRECATION",
+    "knownSemantics": "Lambda runtime deprecation. After the deprecation date, create and update operations are blocked. Existing functions continue running but receive no security patches.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["deprecation date", "create/update operations will be blocked", "no longer supported"],
+    "notes": "Use the earliest enforcement date (when create/update is blocked), not the later invocation-block date.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_ELASTICACHE_SERVICE_UPDATE",
+    "knownSemantics": "ElastiCache service update available. May include security fixes or performance improvements.",
+    "defaultClassHint": "SECURITY_RELATED",
+    "deadlineHints": ["recommended by", "apply by"],
+    "notes": "If the update description mentions only bug fixes or features (no CVE), use INFORMATIONAL.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_SHIELD_ADVANCED_RENEWAL",
+    "knownSemantics": "AWS Shield Advanced subscription renewal confirmation. No customer action required.",
+    "defaultClassHint": "INFORMATIONAL",
+    "deadlineHints": [],
+    "notes": "",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_EC2_OPERATIONAL_ISSUE",
+    "knownSemantics": "Active EC2 operational issue. May indicate an ongoing regional disruption.",
+    "defaultClassHint": "SERVICE_DISRUPTION",
+    "deadlineHints": [],
+    "notes": "Check statusCode. If closed/resolved, reclassify as INFORMATIONAL.",
+    "impactLocus": "listed_resource"
+  },
+  {
+    "eventTypeCode": "AWS_KEYSPACES_TLS_CERTIFICATE_ROTATION",
+    "knownSemantics": "Amazon Keyspaces is rotating its TLS certificate. Applications trusting the old root CA may lose connectivity.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["certificate rotation date", "old certificate expires"],
+    "notes": "Confirmed impact depends on the application trust store, not on the table list AWS provides. Use get_event_type_guidance + get_affected_entities together.",
+    "impactLocus": "dependent"
+  },
+  {
+    "eventTypeCode": "AWS_RDS_CA_CERTIFICATE_ROTATION",
+    "knownSemantics": "RDS is rotating its CA certificate. Client connections trusting only the old root CA may lose connectivity after the rotation date.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["certificate rotation date", "old certificate expires", "CA certificate"],
+    "notes": "Confirmed impact depends on the client application's trust store, not on the DB instance list AWS provides.",
+    "impactLocus": "dependent"
+  },
+  {
+    "eventTypeCode": "AWS_DOCDB_CA_CERTIFICATE_ROTATION",
+    "knownSemantics": "DocumentDB is rotating its CA certificate. Client connections trusting only the old root CA may lose connectivity after the rotation date.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["certificate rotation date", "old certificate expires", "CA certificate"],
+    "notes": "Confirmed impact depends on the client application's trust store, not on the cluster list AWS provides.",
+    "impactLocus": "dependent"
+  },
+  {
+    "eventTypeCode": "AWS_TLS_1_0_1_1_DEPRECATION",
+    "knownSemantics": "A service endpoint is deprecating TLS 1.0/1.1. Clients that cannot negotiate TLS 1.2+ will lose connectivity after the deadline.",
+    "defaultClassHint": "BREAKING_CHANGE",
+    "deadlineHints": ["TLS 1.0", "TLS 1.1", "deprecation date", "minimum TLS version"],
+    "notes": "Confirmed impact depends on each caller's negotiated TLS version and SDK/runtime, not on the listed endpoint.",
+    "impactLocus": "dependent"
+  }
+]

@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "health_event_v1",
+  "title": "AWS Health EventBridge Event Detail",
+  "description": "Schema for the 'detail' field of an aws.health EventBridge event. Unknown fields are preserved in 'raw'.",
+  "type": "object",
+  "required": ["eventArn", "service", "eventTypeCode", "eventTypeCategory", "statusCode"],
+  "additionalProperties": true,
+  "properties": {
+    "eventArn": {
+      "type": "string",
+      "description": "Unique ARN for the health event"
+    },
+    "service": {
+      "type": "string",
+      "description": "AWS service code (e.g. EC2, RDS, EKS, CASSANDRA)"
+    },
+    "eventTypeCode": {
+      "type": "string",
+      "description": "Event type code (e.g. AWS_EC2_OPERATIONAL_ISSUE)"
+    },
+    "eventTypeCategory": {
+      "type": "string",
+      "enum": ["issue", "accountNotification", "scheduledChange", "investigation"],
+      "description": "Category of health event"
+    },
+    "eventScopeCode": {
+      "type": "string",
+      "enum": ["PUBLIC", "ACCOUNT_SPECIFIC", "NONE"],
+      "description": "Scope of the health event"
+    },
+    "communicationId": {
+      "type": "string",
+      "description": "Communication ID for multi-page events"
+    },
+    "startTime": {
+      "type": "string",
+      "description": "Event start time (ISO 8601)"
+    },
+    "endTime": {
+      "type": "string",
+      "description": "Event end time (ISO 8601); absent if event is ongoing"
+    },
+    "lastUpdatedTime": {
+      "type": "string",
+      "description": "Last update time (ISO 8601); used for idempotency"
+    },
+    "statusCode": {
+      "type": "string",
+      "enum": ["open", "closed", "upcoming"],
+      "description": "Event status"
+    },
+    "region": {
+      "type": "string",
+      "description": "AWS Region where the event originated"
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Page number for multi-page events"
+    },
+    "totalPages": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Total number of pages"
+    },
+    "affectedAccount": {
+      "type": "string",
+      "description": "Affected account ID (org-view events)"
+    },
+    "affectedAccounts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of affected account IDs"
+    },
+    "affectedEntities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entityValue": { "type": "string" },
+          "entityArn": { "type": "string" },
+          "entityUrl": { "type": "string" },
+          "entityStatus": { "type": "string" },
+          "lastUpdatedTime": { "type": "string" },
+          "tags": { "type": "object" }
+        }
+      }
+    },
+    "eventDescription": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "language": { "type": "string" },
+          "latestDescription": { "type": "string" }
+        }
+      },
+      "description": "Array of descriptions by language"
+    },
+    "actionability": {
+      "type": "string",
+      "enum": ["ACTIONABLE", "AWS_ACTION"],
+      "description": "Whether customer action is required"
+    },
+    "personas": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Target personas for this event"
+    }
+  }
+}

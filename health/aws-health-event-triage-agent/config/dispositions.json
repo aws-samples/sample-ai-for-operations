@@ -1,0 +1,44 @@
+[
+  {
+    "eventTypeCode": "AWS_SHIELD_ADVANCED_RENEWAL",
+    "disposition": "DIGEST",
+    "precheck": null,
+    "note": "Shield Advanced renewals are confirmations — no action needed."
+  },
+  {
+    "eventTypeCode": "AWS_EKS_FARGATE_POD_EVICTIONS",
+    "disposition": "DIGEST",
+    "precheck": "fargate_posture",
+    "note": "Run fargate_posture precheck. Escalate to TICKET if precheck fails."
+  },
+  {
+    "eventTypeCode": "AWS_KAFKA_SECURITY_PATCHING_EVENT",
+    "disposition": "DIGEST",
+    "precheck": "msk_patch_safety",
+    "note": "Run msk_patch_safety precheck. Escalate to TICKET if cluster is at risk."
+  },
+  {
+    "eventTypeCode": "AWS_EC2_MAINTENANCE_SCHEDULED",
+    "disposition": "DIGEST",
+    "precheck": null,
+    "note": "Scheduled EC2 maintenance — review but typically no immediate action needed."
+  },
+  {
+    "eventTypeCode": "AWS_RDS_SECURITY_PATCHING",
+    "disposition": "DIGEST",
+    "precheck": null,
+    "note": "RDS security patches applied during maintenance window — informational unless window conflicts."
+  },
+  {
+    "eventTypeCode": "AWS_ELASTICACHE_SERVICE_UPDATE",
+    "disposition": "DIGEST",
+    "precheck": null,
+    "note": "ElastiCache update available — review and apply manually."
+  },
+  {
+    "eventTypeCode": "AWS_DETECTIVE_ENABLED_ENTITY_COUNT_NOTIFICATION",
+    "disposition": "DIGEST",
+    "precheck": null,
+    "note": "Detective entity count informational notice."
+  }
+]

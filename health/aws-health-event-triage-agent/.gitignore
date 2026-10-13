@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.egg-info/
+dist/
+build/
+uv.lock
+**/.DS_Store
+**/cdk.out/
+.kiro/local/
+.kiro/tmp/
+**/node_modules/
+infra/dist/
+.hypothesis/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+# Security-scan report exports (e.g. ProbeScanExport-*.csv) are generated
+# artifacts, not source — never commit them.
+ProbeScanExport-*.csv

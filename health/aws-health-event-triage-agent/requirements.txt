@@ -1,0 +1,8 @@
+strands-agents>=1.40.0,<2.0.0
+strands-agents-tools>=0.5.0,<1.0.0
+bedrock-agentcore>=1.0.0,<2.0.0
+boto3>=1.43.103,<2.0.0  # >=1.43.103 required: first version bundling the "devops-agent" service model (ListJournalRecords, AssociateService, etc.) used by src/devops_agent/
+hypothesis>=6.100.0,<7.0.0
+pytest>=8.0.0,<10.0.0
+python-dateutil>=2.9.0,<3.0.0
+requests>=2.32.0,<3.0.0

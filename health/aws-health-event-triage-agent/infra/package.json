@@ -1,0 +1,30 @@
+{
+  "name": "aws-health-event-triage-agent-infra",
+  "version": "0.1.0",
+  "description": "CDK v2 infrastructure for the AWS Health Event Triage Agent",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy --all",
+    "diff": "cdk diff",
+    "destroy": "cdk destroy --all"
+  },
+  "devDependencies": {
+    "@aws-cdk/aws-lambda-python-alpha": "^2.271.0-alpha.0",
+    "@aws-sdk/client-devops-agent": "^3.1141.0",
+    "@aws-sdk/client-secrets-manager": "^3.1141.0",
+    "@types/node": "22.*",
+    "aws-cdk": "2.*",
+    "esbuild": "0.28.2",
+    "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.*",
+    "constructs": "10.8.1"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

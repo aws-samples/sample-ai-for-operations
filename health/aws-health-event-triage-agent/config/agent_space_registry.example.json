@@ -1,0 +1,57 @@
+[
+  {
+    "ruleType": "ACCOUNT",
+    "key": "123456789012",
+    "agentSpaceId": "placeholder-space-id",
+    "ownerAccountId": "234567890123",
+    "region": "us-east-1",
+    "triggerMethod": "WEBHOOK",
+    "webhookUrl": "https://placeholder-space-id.example.com/eventChannel",
+    "webhookSecretArn": "arn:aws:secretsmanager:us-east-1:234567890123:secret:health-triage-devops-agent-webhook-placeholder",
+    "assumableRoleArn": null,
+    "allowedScopes": ["ACCOUNT_SPECIFIC", "PUBLIC"],
+    "allowedAccountNotificationCodes": [
+      "AWS_EKS_CLUSTER_HEALTH_ISSUE",
+      "AWS_VPN_REDUNDANCY_LOSS"
+    ],
+    "incidentCapPerMonth": 50,
+    "readinessEnabled": false,
+    "readinessCapPerMonth": 10,
+    "dedupeWindowMinutes": 60
+  },
+  {
+    "ruleType": "OU",
+    "key": "Root/Production",
+    "agentSpaceId": "placeholder-production-space-id",
+    "ownerAccountId": "234567890123",
+    "region": "us-east-1",
+    "triggerMethod": "WEBHOOK",
+    "webhookUrl": "https://placeholder-production-space-id.example.com/eventChannel",
+    "webhookSecretArn": "arn:aws:secretsmanager:us-east-1:234567890123:secret:health-triage-devops-agent-webhook-production-placeholder",
+    "assumableRoleArn": null,
+    "allowedScopes": ["ACCOUNT_SPECIFIC", "PUBLIC"],
+    "allowedAccountNotificationCodes": [
+      "AWS_EKS_CLUSTER_HEALTH_ISSUE"
+    ],
+    "incidentCapPerMonth": 75,
+    "readinessEnabled": false,
+    "readinessCapPerMonth": 10,
+    "dedupeWindowMinutes": 60
+  },
+  {
+    "ruleType": "DEFAULT",
+    "agentSpaceId": "placeholder-default-space-id",
+    "ownerAccountId": "234567890123",
+    "region": "us-east-1",
+    "triggerMethod": "WEBHOOK",
+    "webhookUrl": "https://placeholder-default-space-id.example.com/eventChannel",
+    "webhookSecretArn": "arn:aws:secretsmanager:us-east-1:234567890123:secret:health-triage-devops-agent-webhook-default-placeholder",
+    "assumableRoleArn": null,
+    "allowedScopes": ["ACCOUNT_SPECIFIC"],
+    "allowedAccountNotificationCodes": [],
+    "incidentCapPerMonth": 100,
+    "readinessEnabled": false,
+    "readinessCapPerMonth": 0,
+    "dedupeWindowMinutes": 60
+  }
+]
