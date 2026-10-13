@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bedrock-permissions-audit"
+version = "1.0.0"
+description = "Read-only audit that ranks long-lived AWS credentials by Amazon Bedrock exposure"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT-0"
+dependencies = ["boto3>=1.39"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "moto[iam,sts,organizations]>=5",
+    "pyyaml>=6",
+    "ruff>=0.5",
+    "cfn-lint>=1",
+]
+
+[project.scripts]
+bedrock-audit = "bedrock_permissions_audit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+bedrock_permissions_audit = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = [
+    "error::DeprecationWarning:bedrock_permissions_audit",
+    "ignore:datetime.datetime.utcnow\\(\\) is deprecated:DeprecationWarning:botocore",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
