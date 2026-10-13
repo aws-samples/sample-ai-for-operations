@@ -1,0 +1,26 @@
+{
+  "AmazonEKS": {
+    "ClusterUsage": {
+      "unitPrice": 0.10,
+      "unit": "hour",
+      "currency": "USD"
+    },
+    "ExtendedSupportUsage": {
+      "unitPrice": 0.60,
+      "unit": "hour",
+      "currency": "USD"
+    }
+  },
+  "AmazonRDS": {
+    "ExtendedSupportYear1-2": {
+      "unitPrice": 0.10,
+      "unit": "vCPU-Hour",
+      "currency": "USD"
+    },
+    "ExtendedSupportYear3": {
+      "unitPrice": 0.20,
+      "unit": "vCPU-Hour",
+      "currency": "USD"
+    }
+  }
+}

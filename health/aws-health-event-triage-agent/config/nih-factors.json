@@ -1,0 +1,10 @@
+{
+  "t3.small.search": 0.25,
+  "t3.medium.search": 0.5,
+  "m5.large.search": 1.0,
+  "m5.xlarge.search": 2.0,
+  "m5.2xlarge.search": 4.0,
+  "r5.large.search": 1.5,
+  "r5.xlarge.search": 3.0,
+  "r5.2xlarge.search": 6.0
+}

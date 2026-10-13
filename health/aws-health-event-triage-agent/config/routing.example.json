@@ -1,0 +1,65 @@
+[
+  {
+    "ruleType": "TAG",
+    "key": "Team=platform-kubernetes",
+    "team": "Platform-Kubernetes",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:platform-kubernetes-notifications",
+    "jiraProject": "PLATK8S",
+    "chatChannel": "#platform-kubernetes-alerts",
+    "escalation": "platform-kubernetes-oncall@example.com"
+  },
+  {
+    "ruleType": "ACCOUNT",
+    "key": "123456789012",
+    "team": "Payments-Platform",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:payments-platform-notifications",
+    "jiraProject": "PAY",
+    "chatChannel": "#payments-platform-alerts",
+    "escalation": "payments-platform-oncall@example.com"
+  },
+  {
+    "ruleType": "OU",
+    "key": "Root/Production/Payments",
+    "team": "Payments-Platform",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:payments-platform-notifications",
+    "jiraProject": "PAY",
+    "chatChannel": "#payments-platform-alerts",
+    "escalation": "payments-platform-oncall@example.com"
+  },
+  {
+    "ruleType": "SERVICE",
+    "key": "EKS",
+    "team": "Platform-Kubernetes",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:platform-kubernetes-notifications",
+    "jiraProject": "PLATK8S",
+    "chatChannel": "#platform-kubernetes-alerts",
+    "escalation": "platform-kubernetes-oncall@example.com"
+  },
+  {
+    "ruleType": "SERVICE",
+    "key": "RDS",
+    "team": "Platform-Database",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:platform-database-notifications",
+    "jiraProject": "PLATDB",
+    "chatChannel": "#platform-database-alerts",
+    "escalation": "platform-database-oncall@example.com"
+  },
+  {
+    "ruleType": "SERVICE",
+    "key": "CASSANDRA",
+    "team": "Platform-Database",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:platform-database-notifications",
+    "jiraProject": "PLATDB",
+    "chatChannel": "#platform-database-alerts",
+    "escalation": "platform-database-oncall@example.com"
+  },
+  {
+    "ruleType": "DEFAULT",
+    "key": "*",
+    "team": "Platform-Operations",
+    "snsTopicArn": "arn:aws:sns:us-east-1:123456789012:health-triage-classification-results",
+    "jiraProject": "PLATOPS",
+    "chatChannel": "#platform-operations-alerts",
+    "escalation": "platform-operations-oncall@example.com"
+  }
+]

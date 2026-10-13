@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "notification_payload_v1",
+  "title": "NotificationPayload v1",
+  "description": "Structured payload published to the classification SNS topic after triage. All triage fields are nullable in Phase 1 (set in later phases).",
+  "type": "object",
+  "required": ["version", "eventArn", "service", "statusCode", "updateOf"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": ["1"],
+      "description": "Schema version"
+    },
+    "eventArn": {
+      "type": "string",
+      "description": "AWS Health event ARN"
+    },
+    "service": {
+      "type": "string",
+      "description": "AWS service code"
+    },
+    "eventTypeCode": {
+      "type": "string"
+    },
+    "eventTypeCategory": {
+      "type": "string"
+    },
+    "statusCode": {
+      "type": "string",
+      "enum": ["open", "upcoming", "closed"]
+    },
+    "lastUpdatedTime": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "updateOf": {
+      "type": ["string", "null"],
+      "description": "SNS message ID of the previous notification for this event; null on first publish"
+    },
+    "affectedAccountCount": {
+      "type": "integer",
+      "description": "Total number of affected accounts at time of publish"
+    },
+    "classification": {
+      "type": ["string", "null"],
+      "enum": [
+        "SERVICE_DISRUPTION",
+        "BREAKING_CHANGE",
+        "SECURITY_RELATED",
+        "COST_IMPLICATION",
+        "INFORMATIONAL",
+        "UNCLASSIFIED",
+        null
+      ],
+      "description": "Triage classification — populated from Phase 2."
+    },
+    "classificationReason": {
+      "type": ["string", "null"],
+      "description": "Plain-language explanation of the classification."
+    },
+    "urgency": {
+      "type": ["string", "null"],
+      "enum": ["critical", "high", "medium", "low", null],
+      "description": "Urgency tier computed by precision tool — populated from Phase 2."
+    },
+    "deadline": {
+      "type": ["string", "null"],
+      "description": "ISO 8601 date of the earliest customer-impacting deadline."
+    },
+    "deadline_basis": {
+      "type": ["string", "null"],
+      "description": "Quoted phrase from the event that gave the deadline."
+    },
+    "disposition": {
+      "type": ["string", "null"],
+      "enum": ["TICKET", "DIGEST", null],
+      "description": "Disposition decision — TICKET or DIGEST."
+    },
+    "precheck": {
+      "type": ["string", "null"],
+      "description": "Precheck name to run before finalising disposition, or null."
+    },
+    "verificationSteps": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Operator verification steps from the classifier."
+    },
+    "impactSummary": {
+      "type": ["object", "null"],
+      "description": "Impact inventory result from build_impact_inventory — populated from Phase 3 for BREAKING_CHANGE, SECURITY_RELATED, and COST_IMPLICATION events. Null for other classes.",
+      "properties": {
+        "impact_status": {
+          "type": "string",
+          "enum": ["confirmed", "not_detected", "unverifiable", "in_scope_unverified"],
+          "description": "in_scope_unverified added 2026-09-28 (working spec feat-devops-agent-enrichment req §1a): the event's listed resources are in scope, but confirmed impact depends on a client-side factor (trust store, TLS version, SDK version) AWS cannot see — schema-compatible addition, existing readers treating unknown enum values as unverifiable degrade safely."
+        },
+        "by_account": { "type": "object" },
+        "by_environment": { "type": "object" },
+        "resources": { "type": "array" },
+        "verification_steps": { "type": "array", "items": { "type": "string" } },
+        "enrichment": {
+          "type": ["object", "null"],
+          "description": "Whether an enrichment lookup/investigation ran for this inventory, and if not, why. Added 2026-09-28 (task 0b).",
+          "properties": {
+            "ran": { "type": "boolean" },
+            "reason": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "costProjection": {
+      "type": ["object", "null"],
+      "description": "Cost projection result from project_cost — populated from Phase 3 for COST_IMPLICATION events and BREAKING_CHANGE events carrying extended-support pricing. Null otherwise, or when unknown.",
+      "properties": {
+        "unknown": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "per_resource": { "type": "array" },
+        "per_account": { "type": "object" },
+        "org_total": { "type": "object" },
+        "monthly_increment": { "type": "number" },
+        "to_deadline": { "type": "number" },
+        "twelve_month": { "type": "number" },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "confidence": {
+          "type": "string",
+          "enum": ["list_price", "usage_based", "unknown"]
+        }
+      }
+    },
+    "assignedTeam": {
+      "type": ["string", "null"],
+      "description": "Routing destination team — null until Phase 6."
+    },
+    "impact": {
+      "type": ["string", "null"],
+      "enum": ["confirmed", "not_detected", "unverifiable", null],
+      "description": "DevOps Agent investigation outcome (R12.7), or R8's default when the module is disabled or the event was not eligible for investigation."
+    },
+    "investigationLink": {
+      "type": ["string", "null"],
+      "description": "Link to the AWS DevOps Agent investigation, populated only when impact != null and an investigation actually ran."
+    },
+    "readinessFeasibility": {
+      "type": ["string", "null"],
+      "enum": ["ready", "blocked", "needs_remediation", "unverifiable", null],
+      "description": "DevOps Agent readiness assessment outcome (R12.3), null if not assessed or the readiness module is disabled for this Agent Space."
+    },
+    "readinessBlockers": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Blocking conditions from the readiness assessment, empty array when readinessFeasibility is 'ready'."
+    },
+    "readinessRisk": {
+      "type": ["string", "null"],
+      "enum": ["low", "medium", "high", "unknown", null],
+      "description": "Risk level of making the assessed change, per the readiness assessment."
+    },
+    "readinessAssessmentLink": {
+      "type": ["string", "null"],
+      "description": "Link to the DevOps Agent readiness investigation, same URL format as investigationLink."
+    }
+  }
+}

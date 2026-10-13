@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "classification_result_v1",
+  "title": "ClassificationResult v1",
+  "description": "Structured output of the classification agent for a single consolidated health event.",
+  "type": "object",
+  "required": ["classification", "reason"],
+  "additionalProperties": false,
+  "properties": {
+    "classification": {
+      "type": "string",
+      "enum": [
+        "SERVICE_DISRUPTION",
+        "BREAKING_CHANGE",
+        "SECURITY_RELATED",
+        "COST_IMPLICATION",
+        "INFORMATIONAL",
+        "UNCLASSIFIED"
+      ],
+      "description": "Exactly one classification for the event."
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 10,
+      "description": "At least one sentence explaining the classification with reference to specific event content."
+    },
+    "deadline": {
+      "type": ["string", "null"],
+      "description": "ISO 8601 date (YYYY-MM-DD) of the earliest customer-impacting action deadline, or null."
+    },
+    "deadline_basis": {
+      "type": ["string", "null"],
+      "description": "The exact quoted phrase from the event description that provided the deadline."
+    },
+    "verification_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Concrete steps for the operator to verify or act on this event."
+    },
+    "notes_for_operator": {
+      "type": ["string", "null"],
+      "description": "Additional context that does not fit in the reason field."
+    }
+  }
+}
