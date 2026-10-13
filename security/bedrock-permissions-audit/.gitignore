@@ -1,0 +1,22 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.egg-info/
+dist/
+build/
+uv.lock
+**/.DS_Store
+**/cdk.out/
+.kiro/local/
+# Security-scan report exports are generated artifacts, not source — never commit them.
+ProbeScanExport-*.csv
+**/.threatmodel/
+# Test, coverage and lint artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+# Audit output (contains account IDs and principal names; never commit)
+bedrock-audit-*/

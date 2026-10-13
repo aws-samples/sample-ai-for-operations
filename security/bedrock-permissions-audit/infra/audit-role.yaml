@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Read-only IAM role for bedrock-audit (bedrock-permissions-audit). Deploy to every member
+  account, for example as a CloudFormation StackSet from the management account. The role can
+  list IAM users and keys and run the IAM policy simulator; it cannot change anything.
+
+Parameters:
+  TrustedPrincipalArn:
+    Type: String
+    Description: >-
+      Required. ARN of the one IAM role or user, in the account that runs bedrock-audit (the
+      management or delegated administrator account), that is allowed to assume this role. The
+      template never trusts a whole account.
+    AllowedPattern: "^arn:aws:iam::[0-9]{12}:(role|user)/.+$"
+    ConstraintDescription: Must be the ARN of an IAM role or user, in the form arn:aws:iam::ACCOUNT_ID:role/NAME.
+  ExternalId:
+    Type: String
+    Default: ""
+    Description: Optional ExternalId the caller must present. Pass the same value to bedrock-audit --external-id.
+    AllowedPattern: "^[A-Za-z0-9+=,.@:/_-]{0,1224}$"
+  RoleName:
+    Type: String
+    Default: BedrockPermissionsAuditRole
+    Description: Name of the role. Pass the same value to bedrock-audit --role-name.
+    AllowedPattern: "^[A-Za-z0-9+=,.@_-]{1,64}$"
+  Owner:
+    Type: String
+    Default: unassigned
+    Description: Value for the owner tag.
+    AllowedPattern: "^[A-Za-z0-9 +=,.@:/_-]{1,128}$"
+  Environment:
+    Type: String
+    Default: audit
+    Description: Value for the environment tag.
+    AllowedPattern: "^[A-Za-z0-9 +=,.@:/_-]{1,128}$"
+
+Conditions:
+  RequireExternalId: !Not [!Equals [!Ref ExternalId, ""]]
+
+Resources:
+  AuditRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: >-
+              The role name must be predictable: bedrock-audit assumes it by name in every
+              member account, so it cannot be generated.
+          - id: W11
+            reason: >-
+              Every action is a read (Get, List, Generate credential report, Simulate). IAM
+              does not support resource-level scoping for the list and report actions.
+    Properties:
+      RoleName: !Ref RoleName
+      Description: Read-only access for bedrock-audit to rank long-lived credentials by Amazon Bedrock exposure.
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: !Ref TrustedPrincipalArn
+            Condition: !If
+              - RequireExternalId
+              - StringEquals:
+                  sts:ExternalId: !Ref ExternalId
+              - !Ref AWS::NoValue
+      Policies:
+        - PolicyName: BedrockPermissionsAuditReadOnly
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CredentialInventory
+                Effect: Allow
+                Action:
+                  - iam:GenerateCredentialReport
+                  - iam:GetCredentialReport
+                  - iam:ListUsers
+                  - iam:ListAccessKeys
+                  - iam:GetAccessKeyLastUsed
+                  - iam:ListServiceSpecificCredentials
+                  - iam:GetAccountSummary
+                Resource: "*"
+              - Sid: PolicyAttachmentInventory
+                Effect: Allow
+                Action:
+                  - iam:ListAttachedUserPolicies
+                  - iam:ListGroupsForUser
+                  - iam:ListAttachedGroupPolicies
+                  - iam:ListMFADevices
+                Resource: "*"
+              - Sid: PolicySimulation
+                Effect: Allow
+                Action:
+                  - iam:SimulatePrincipalPolicy
+                  - iam:GetUser
+                  - iam:GetUserPolicy
+                  - iam:ListUserPolicies
+                  - iam:GetGroupPolicy
+                  - iam:ListGroupPolicies
+                  - iam:GetPolicy
+                  - iam:GetPolicyVersion
+                Resource: "*"
+      Tags:
+        - Key: project
+          Value: bedrock-permissions-audit
+        - Key: environment
+          Value: !Ref Environment
+        - Key: owner
+          Value: !Ref Owner
+        - Key: data-classification
+          Value: confidential
+
+Outputs:
+  RoleArn:
+    Description: ARN of the audit role.
+    Value: !GetAtt AuditRole.Arn
+  RoleName:
+    Description: Pass this to bedrock-audit --role-name.
+    Value: !Ref AuditRole

@@ -1,0 +1,77 @@
+# Copyright (c) 2026 Amazon Web Services
+# Licensed under the MIT-0 License
+#
+# Example configuration for bedrock-audit. Every key is optional; the value shown is the default.
+# Command-line flags override this file. Copy to audit.toml and pass --config audit.toml.
+
+# auto   = try an organization-wide scan, fall back to the current account if
+#          organizations:ListAccounts is denied
+# org    = organization-wide only (fail if not permitted)
+# single = audit only the account the credentials belong to
+mode = "auto"
+
+# Role assumed in each member account (organization mode). The default is the read-only role
+# that infra/audit-role.yaml creates; deploy it to the member accounts, for example as a
+# StackSet. Set another name here if you deployed it under a different name.
+role_name = "BedrockPermissionsAuditRole"
+
+# external_id = "my-external-id"   # only if the audit role's trust policy requires one
+
+# A credential unused for this many days is "dormant"; one older than this is "old".
+dormant_days = 90
+
+# Number of accounts audited at once. Each account has its own IAM rate limits, so raising
+# this does not compound throttling. Raise to 32 for organizations of several hundred accounts.
+parallel_accounts = 8
+
+# Output directory. Default: ./bedrock-audit-<UTC timestamp>/
+# output_dir = "./bedrock-audit-results"
+
+# Regions where Amazon Bedrock is available to you. Default: the bundled list of commercial Regions.
+# Narrow this to the Regions you have enabled to speed up the scoped-grant check.
+# bedrock_regions = ["us-east-1", "us-west-2", "eu-west-1"]
+
+# Models used to detect a grant scoped to specific models (the simulator matches resource ARNs
+# as strings). Default: the bundled list. Add your own approved model IDs here to avoid misses.
+# representative_models = ["anthropic.claude-3-haiku-20240307-v1:0"]
+
+# Used only to render remediation/scp-restrict-bedrock-regions-models.json
+# approved_models = ["anthropic.claude-3-haiku-20240307-v1:0"]
+
+# Principal ARN patterns exempt from remediation/scp-deny-bedrock-to-iam-users.json
+# scp_exception_principals = ["arn:aws:iam::*:user/ci-bedrock-*"]
+
+# Policies that make an Amazon Bedrock-capable principal Critical
+admin_policy_arns = [
+  "arn:aws:iam::aws:policy/AdministratorAccess",
+  "arn:aws:iam::aws:policy/PowerUserAccess",
+  "arn:aws:iam::aws:policy/AmazonBedrockFullAccess",
+]
+
+[actions]
+# Any of these allowed => the principal "can invoke" Amazon Bedrock models.
+invoke = [
+  "bedrock:InvokeModel",
+  "bedrock:InvokeModelWithResponseStream",
+  "bedrock:Converse",
+  "bedrock:ConverseStream",
+  "bedrock:CallWithBearerToken",
+  "bedrock-mantle:CallWithBearerToken",
+]
+# Any of these allowed on top of invoke => Critical (the principal can enable more models or create API keys).
+escalation = [
+  "aws-marketplace:Subscribe",
+  "bedrock:CreateMarketplaceModelEndpoint",
+  "iam:CreateServiceSpecificCredential",
+]
+# ALL of these allowed on "*" => treated as holding bedrock:* => Critical. They are unrelated
+# management actions on purpose: any one of them alone is granted by narrower managed policies such
+# as AmazonBedrockLimitedAccess, which lists explicit actions. An empty list never claims bedrock:*.
+canary = [
+  "bedrock:DeleteCustomModel",
+  "bedrock:PutModelInvocationLoggingConfiguration",
+  "bedrock:DeleteGuardrail",
+  "bedrock:CreateProvisionedModelThroughput",
+  "bedrock:DeleteAgent",
+  "bedrock:DeleteKnowledgeBase",
+]

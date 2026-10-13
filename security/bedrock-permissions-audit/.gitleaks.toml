@@ -1,0 +1,21 @@
+# gitleaks configuration for bedrock-permissions-audit.
+#
+# The tests use documented placeholder credentials to check that key IDs are masked and redacted.
+# None of them is a real credential. This allowlist names exactly those placeholders; every other
+# finding is still reported, because the default rules stay on.
+
+title = "bedrock-permissions-audit"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documented placeholder credentials used as test data"
+regexes = [
+  # The AWS documentation example access key ID (ends in EXAMPLE).
+  '''AKIA[A-Z0-9]*EXAMPLE''',
+  # A dummy temporary-credential key ID used by the session test.
+  '''ASIA[A-Z0-9]*EXAMPLE[0-9]*''',
+  # A fake Amazon Bedrock API key: the key prefix plus base64 of an obviously fake name.
+  '''ABSKQmVkcm9ja0FQSUtleS1l[A-Za-z0-9+/=]*''',
+]

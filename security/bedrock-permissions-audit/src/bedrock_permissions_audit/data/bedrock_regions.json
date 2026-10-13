@@ -1,0 +1,34 @@
+{
+  "_comment": "Commercial-partition Regions where Amazon Bedrock is offered, and representative resource IDs used only to build IAM simulation resource ARNs. IDs need not exist in every Region: IAM matches the ARN string against policy patterns. Override with the bedrock_regions / representative_models config keys. GovCloud and China partitions are not covered in v1.",
+  "partition": "aws",
+  "regions": [
+    "us-east-1", "us-east-2", "us-west-1", "us-west-2",
+    "ca-central-1", "ca-west-1",
+    "mx-central-1",
+    "eu-central-1", "eu-central-2", "eu-north-1", "eu-south-1", "eu-south-2",
+    "eu-west-1", "eu-west-2", "eu-west-3",
+    "ap-east-2", "ap-northeast-1", "ap-northeast-2", "ap-northeast-3",
+    "ap-south-1", "ap-south-2",
+    "ap-southeast-1", "ap-southeast-2", "ap-southeast-3", "ap-southeast-4",
+    "ap-southeast-5", "ap-southeast-6", "ap-southeast-7",
+    "il-central-1", "me-central-1", "me-south-1",
+    "af-south-1",
+    "sa-east-1"
+  ],
+  "representative_models": [
+    "anthropic.claude-3-haiku-20240307-v1:0",
+    "anthropic.claude-3-5-sonnet-20241022-v2:0",
+    "anthropic.claude-sonnet-4-20250514-v1:0",
+    "amazon.nova-lite-v1:0",
+    "amazon.nova-pro-v1:0",
+    "amazon.titan-text-express-v1",
+    "meta.llama3-1-70b-instruct-v1:0",
+    "mistral.mistral-large-2402-v1:0",
+    "cohere.command-r-plus-v1:0"
+  ],
+  "representative_inference_profiles": [
+    "us.anthropic.claude-3-haiku-20240307-v1:0",
+    "eu.anthropic.claude-3-haiku-20240307-v1:0",
+    "global.anthropic.claude-sonnet-4-20250514-v1:0"
+  ]
+}
