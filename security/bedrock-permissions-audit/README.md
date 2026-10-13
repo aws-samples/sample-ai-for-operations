@@ -1,4 +1,9 @@
 # Amazon Bedrock Permissions Audit
+> **This is sample code** Review it with your security and legal teams, and validate it in a non-production environment before you rely on its results.
+> 
+> **How it has been tested.** The automated suite runs without AWS credentials and covers every acceptance scenario in the specification. The tool was run against a non-production AWS Organization of multiple accounts with seeded IAM principals covering every risk tier, both with an administrator role and with the dedicated read-only role in audit-role.yaml.
+> 
+> It has not been timed on a large organization (hundreds of accounts), and its results depend on the IAM policy simulator, whose limitations are listed under Limitations. Treat a finding as a lead to verify, not a verdict.
 
 A read-only command-line tool that finds the long-lived AWS credentials in your account, or in
 every account of your AWS Organization, that can invoke Amazon Bedrock models, and assigns each a
