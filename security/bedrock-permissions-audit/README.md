@@ -9,6 +9,8 @@ A read-only command-line tool that finds the long-lived AWS credentials in your 
 every account of your AWS Organization, that can invoke Amazon Bedrock models, and assigns each a
 risk tier with a recommended action.
 
+Reference article: [From idea to release in a day: reviewing who can call Amazon Bedrock in your AWS accounts](https://builder.aws.com/content/3Kh1PUNS4LpASs3ZADhUO7lejEe/from-idea-to-release-in-a-day-reviewing-who-can-call-amazon-bedrock-in-your-aws-accounts)
+
 ## Related AWS capabilities
 
 This tool is a point-in-time review of IAM configuration. It does not monitor usage or enforce
