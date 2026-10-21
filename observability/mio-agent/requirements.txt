@@ -20,4 +20,4 @@ PyYAML==6.0.2
 
 # Utilities
 python-dateutil==2.9.0
-urllib3==2.7.0
+urllib3==2.8.0
