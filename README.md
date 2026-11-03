@@ -17,6 +17,7 @@ Each agent is a self-contained, deployable solution that follows a common patter
 | **Cloud Governance** | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | Explains Amazon Bedrock usage, compares utilization against TPM/RPM quotas, and drafts or submits quota increase requests — via CLI or Slack | Available |
 | **Cloud Governance** | [DART Agent](governance/dart-agent/) | Pre-flight check for LLM fine-tuning datasets — profiles schema, detects duplicates, scans for PII, projects training cost, and returns a GO / NO-GO / GO WITH FIXES verdict with an auditable trail | Available |
 | **Cost Optimization** | _Coming soon_ | Identifies misconfigured architectures and underutilized resources, suggests optimization plans | Planned |
+| **Resiliency** | [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) | Read-only daily check that AWS Cloud WAN, AWS Transit Gateway and AWS Direct Connect routing still matches the intended design — wrong routing domain, prefix leaks, blackhole routes, route/prefix limits, Direct Connect redundancy and hybrid path intent. Publishes a heartbeat or drift report to Amazon SNS; optionally hands new findings to AWS DevOps Agent for investigation | Available |
 | **Resiliency** | _Coming soon_ | Monitors resilience posture, recommends failover actions, validates recovery procedures | Planned |
 | **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
 | **Security** | [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | Read-only CLI (no AI agent) that finds the long-lived credentials in an account or organization that can invoke Amazon Bedrock models, and assigns each a risk tier with a recommended action | Available |
@@ -46,7 +47,8 @@ sample-ai-agents-for-operations/
 │   ├── bedrock-quota-assistant/         # Bedrock quota analysis + increase requests
 │   └── dart-agent/                      # Fine-tuning dataset audit + GO/NO-GO verdict
 ├── cost-optimization/               # Cost & efficiency domain (planned)
-├── resiliency/                      # Resilience & recovery domain (planned)
+├── resiliency/                      # Resilience & recovery domain
+│   └── network-routing-drift-checker/   # Daily Cloud WAN / Transit Gateway / Direct Connect routing drift check
 ├── security/                        # Security posture domain
 │   ├── access-key-compromise-responder/ # Access-key compromise investigation + recommendations
 │   └── bedrock-permissions-audit/       # Long-lived credential exposure audit for Amazon Bedrock
@@ -87,11 +89,12 @@ Where today's agents sit:
 - **MIO Agent** — L0–L1. Read-only by design; it reports findings and recommends fixes but holds no write permissions in your account.
 - **Bedrock Quota Assistant** — L1–L2. Analysis and drafting are autonomous; submitting a quota increase support case (its only mutating action) requires explicit user confirmation.
 - **AWS Health Notification Agent** — L1–L2. Classification and ticket creation are autonomous; remediation runs only after human approval.
+- **Network Routing Drift Checker** — L0. Read-only by design; it reports drift and holds no write permissions on your network. The optional AWS DevOps Agent investigation explains findings that deterministic code has already decided and does not change them.
 - **DART Agent** — L1–L2. Dataset analysis is read-only and autonomous; safe fixes are written to a new cleaned dataset (the original is never modified), and riskier fixes are queued for your approval.
 
 ## Technology Stack
 
-Every agent is written in Python 3.12+, reasons with Amazon Bedrock (Claude Sonnet by default, configurable), defines its infrastructure as code, and deploys with a single command. The framework, runtime, and IaC tool vary by agent:
+Every agent is written in Python 3.12+, defines its infrastructure as code, and deploys with a single command. Most agents reason with Amazon Bedrock (Claude Sonnet by default, configurable); the Network Routing Drift Checker makes its decisions in deterministic code and optionally uses AWS DevOps Agent for investigation. The framework, runtime, and IaC tool vary by agent:
 
 | Agent | Agent Framework | Runtime | Infrastructure | Deploy |
 |---|---|---|---|---|
@@ -99,6 +102,7 @@ Every agent is written in Python 3.12+, reasons with Amazon Bedrock (Claude Sonn
 | [MIO Agent](observability/mio-agent/) | Multi-agent coordinator on the Bedrock Converse API (boto3) | AWS Lambda + API Gateway | AWS CDK v2 (Python) | `cdk deploy` |
 | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | [Strands Agents](https://github.com/strands-agents/sdk-python) | Bedrock AgentCore Runtime (container) | AWS CDK v2 (Python) | `make deploy` |
 | [DART Agent](governance/dart-agent/) | [Strands Agents](https://github.com/strands-agents/sdk-python) | Amazon ECS Fargate task (container) | AWS CDK v2 (TypeScript) | `make deploy-staging` |
+| [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) | Deterministic checks; optional AWS DevOps Agent investigation | AWS Step Functions + Lambda | AWS CDK v2 (TypeScript) | `scripts/deploy.sh` |
 
 Individual agents may add domain-specific integrations (Jira, Slack, AgentCore Memory, MCP servers, etc.) documented in their own README.
 
@@ -125,6 +129,9 @@ Then pick one agent (all paths are relative to the repository root):
 
 # Cloud Governance — DART Agent
 (cd governance/dart-agent && make setup && make deploy-staging)
+
+# Resiliency — Network Routing Drift Checker (copy deploy.env.example to .deploy.env and set SCHEDULE_TIMEZONE first)
+(cd resiliency/network-routing-drift-checker && scripts/deploy.sh)
 ```
 
 Note that the DART Agent deploys standing infrastructure including a NAT gateway (~$32/month), so run `cdk destroy` when you are not using it.
@@ -140,7 +147,7 @@ cd sample-ai-agents-for-operations
 git sparse-checkout set governance/dart-agent
 ```
 
-Substitute any agent path — `health/aws-health-notification-agent`, `observability/mio-agent`, `governance/bedrock-quota-assistant`, `governance/dart-agent`. Add more later with `git sparse-checkout add <path>`.
+Substitute any agent path — `health/aws-health-notification-agent`, `observability/mio-agent`, `governance/bedrock-quota-assistant`, `governance/dart-agent`, `resiliency/network-routing-drift-checker`. Add more later with `git sparse-checkout add <path>`.
 
 `--filter=blob:none` skips downloading file contents outside your chosen folder and `--sparse` starts with only root-level files checked out, so you never materialise the other agents. Root-level files (`README.md`, `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`) are always included. You keep a working git remote, so `git pull` picks up updates to your agent as normal.
 
@@ -157,7 +164,7 @@ Start with the [AWS Health Event Triage Agent](health/aws-health-event-triage-ag
 
 ## Customise with Kiro IDE
 
-These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/), [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), and [DART Agent](governance/dart-agent/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
+These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/), [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), [DART Agent](governance/dart-agent/), and [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
 
 ```
 <agent>/.kiro/specs/
@@ -193,6 +200,7 @@ You don't need to write specs manually — Kiro builds them from your natural la
 | Reweight an assessment score | "Weight distributed tracing at 30% in the Observability Maturity Score" |
 | Extend quota coverage to another service | "Check SageMaker endpoint quotas alongside Bedrock quotas" |
 | Add a dataset quality check | "Add a toxicity check to the DART pre-flight report and include it in the score" |
+| Add a routing check | "Add a check that flags Transit Gateway peering attachments missing a route table association" |
 
 Kiro uses the existing specs as architectural context — it understands how the current integrations work and generates changes that fit the established patterns.
 
