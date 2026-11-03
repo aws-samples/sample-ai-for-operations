@@ -1,0 +1,35 @@
+[
+  {
+    "id": "blackhole-orphaned-static-route",
+    "prompt": "[INVESTIGATION_ID:nrdc-2026-10-15T05:00:00Z-a1b2c3d4-1]\nNETWORK ROUTING DRIFT — NEW FINDINGS (run 2026-10-15T05:00:00Z-a1b2c3d4, lookback from 2026-10-14T05:00:00Z)\nAccount 123456789012. Batch 1 of 1. Skill to apply: network-routing-drift (with aws-routing).\n[1] id=f-0123456789abcdef0123 kind=blackhole-route region=eu-central-1 check=check3\n    Blackhole route 10.100.0.0/16 (static) in TGW route table tgw-rtb-0abc.\n    expected: {\"state\":\"active\"}  observed: {\"state\":\"blackhole\"}\n    context: {\"route_table\":\"tgw-rtb-0abc\",\"environment\":\"prod\",\"prefix\":\"10.100.0.0/16\"}\nLookback window for change events: 2026-10-14T05:00:00Z → 2026-10-15T05:00:00Z.",
+    "expected_output": "Searches CloudTrail for the deleted attachment or route change, explains the blackhole, and ends with one nrdc-investigation/v1 block whose incidentId is nrdc-2026-10-15T05:00:00Z-a1b2c3d4-1 and which lists f-0123456789abcdef0123 exactly once.",
+    "assertions": [
+      "ends with a fenced json block containing \"schema\": \"nrdc-investigation/v1\"",
+      "the block's incidentId is nrdc-2026-10-15T05:00:00Z-a1b2c3d4-1",
+      "f-0123456789abcdef0123 appears exactly once across member_finding_ids and unassigned_finding_ids",
+      "every validation command starts with aws <service> describe-, get-, list- or search-",
+      "contains no create-, delete-, replace- or modify- command"
+    ]
+  },
+  {
+    "id": "no-evidence-low-confidence",
+    "prompt": "[INVESTIGATION_ID:nrdc-2026-10-15T05:00:00Z-a1b2c3d4-2]\nNETWORK ROUTING DRIFT — NEW FINDINGS (run 2026-10-15T05:00:00Z-a1b2c3d4, lookback from 2026-10-14T05:00:00Z)\nAccount 123456789012. Batch 2 of 2.\n[1] id=f-aaaaaaaaaaaaaaaaaaaa kind=hybrid-path-prefix-not-found region=global check=check6\n    Hybrid path 172.16.0.0/16: the prefix is not installed in any route table.\n    expected: {\"installed\":true}  observed: {\"installed\":false}\n    context: {\"prefix\":\"172.16.0.0/16\"}\nLookback window for change events: 2026-10-14T05:00:00Z → 2026-10-15T05:00:00Z.",
+    "expected_output": "When CloudTrail and AWS Health return nothing in the window, says 'No evidence found', sets confidence low and actor_identified false, and does not invent a cause.",
+    "assertions": [
+      "root_cause_hypothesis contains 'No evidence found' when no change event exists",
+      "confidence is low",
+      "actor_identified is false",
+      "does not suggest editing the intent file"
+    ]
+  },
+  {
+    "id": "vif-down-grouping",
+    "prompt": "[INVESTIGATION_ID:nrdc-2026-10-15T05:00:00Z-a1b2c3d4-1]\nNETWORK ROUTING DRIFT — NEW FINDINGS\n[1] id=f-1111111111111111111a kind=redundancy-bgp-down region=eu-central-1 check=check4\n    Redundancy pair 'fra-a': BGP peer dxpeer-01 of dxvif-0aaa is down.\n[2] id=f-1111111111111111111b kind=redundancy-pair-down region=eu-central-1 check=check4\n    Redundancy pair 'fra-a': both members are down or missing; there is no working path.\n[3] id=f-1111111111111111111c kind=redundancy-member-down region=eu-central-1 check=check4\n    Redundancy pair 'fra-a': VIF dxvif-0bbb is down.",
+    "expected_output": "Groups all three findings of pair fra-a into one incident and checks AWS Health for a Direct Connect event at the location.",
+    "assertions": [
+      "one incident contains f-1111111111111111111a, f-1111111111111111111b and f-1111111111111111111c",
+      "checks AWS Health for a Direct Connect event",
+      "ranks are a permutation of 1..n"
+    ]
+  }
+]

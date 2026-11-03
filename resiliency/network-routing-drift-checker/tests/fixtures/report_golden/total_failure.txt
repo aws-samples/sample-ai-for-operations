@@ -1,0 +1,20 @@
+Subject: Network routing drift 2026-10-15: 4 new, 1 known, 0 resolved (investigation failed)
+
+Network routing drift report 2026-10-15 (run r1)
+Drift findings: 4 new, 1 known, 0 resolved.
+2026-10-15: 6 of 6 checks run, 15 resources evaluated.
+
+
+INVESTIGATION (AWS DevOps Agent): 0 incident(s) from 0 of 2 batch(es), ranked by blast radius
+Investigation failed: batch 1: NO_RESULT; batch 2: timeout-never-started. Raw findings follow.
+
+NEW (4)
+- [blackhole-route] eu-central-1: Blackhole route 10.100.0.0/16 (static) in tgw-rtb-0prd. (id f-00000000000000000001)
+- [hybrid-path-prefix-not-found] global: Hybrid path 10.100.0.0/16: not installed. (id f-00000000000000000002)
+- [redundancy-bgp-down] eu-central-1: Redundancy pair 'fra-a': BGP peer of dxvif-0a down. (id f-00000000000000000003)
+- [tgw-prefix-leak] eu-west-1: Route table tgw-rtb-0dev has route 10.200.0.0/16 from prod. (id f-00000000000000000004)
+
+KNOWN (1)
+- [blackhole-route] us-east-1: Blackhole route 0.0.0.0/0 in tgw-rtb-0lab. (id f-00000000000000000009) - first seen 2026-10-13 (2 days)
+
+Full findings: s3://bucket/runs/r1/findings.json

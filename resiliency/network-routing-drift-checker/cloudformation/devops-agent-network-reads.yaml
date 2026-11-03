@@ -1,0 +1,35 @@
+# Copyright (c) 2026 Amazon Web Services
+# Licensed under the MIT-0 License
+# See LICENSE file in the project root for full license information.
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Network routing drift checker, optional: give the AWS DevOps Agent role in the networking
+  account the two Network Manager reads that AIDevOpsAgentAccessPolicy (version 11) does not
+  include. Deploy in the networking account, after attaching AIDevOpsAgentAccessPolicy to the role.
+
+Parameters:
+  DevOpsAgentRoleName:
+    Type: String
+    AllowedPattern: "^[A-Za-z0-9+=,.@_-]{1,64}$"
+    Description: >-
+      Name (not ARN) of the Agent Space's role in this account: the primary-source role when the
+      Agent Space is in this account, or the secondary-source role (DevOpsAgentRole-AgentSpace-...)
+      when it is in another account.
+
+Resources:
+  NetworkDriftInvestigationReads:
+    Type: AWS::IAM::RolePolicy
+    Properties:
+      RoleName: !Ref DevOpsAgentRoleName
+      PolicyName: network-routing-drift-investigation-reads
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: CloudWanRoutes
+            Effect: Allow
+            Action: networkmanager:GetNetworkRoutes
+            Resource: !Sub "arn:${AWS::Partition}:networkmanager::${AWS::AccountId}:global-network/*"
+          - Sid: CloudWanChangeEvents
+            Effect: Allow
+            Action: networkmanager:GetCoreNetworkChangeEvents
+            Resource: !Sub "arn:${AWS::Partition}:networkmanager::${AWS::AccountId}:core-network/*"

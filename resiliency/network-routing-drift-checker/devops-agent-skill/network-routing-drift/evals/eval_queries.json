@@ -1,0 +1,38 @@
+[
+  {
+    "query": "[INVESTIGATION_ID:nrdc-2026-10-15T05:00:00Z-a1b2c3d4-1]\nNETWORK ROUTING DRIFT — NEW FINDINGS (run 2026-10-15T05:00:00Z-a1b2c3d4, lookback from 2026-10-14T05:00:00Z)\n[1] id=f-0123456789abcdef0123 kind=blackhole-route region=eu-central-1 check=check3",
+    "should_trigger": true
+  },
+  {
+    "query": "Network routing drift: 3 new findings (2 redundancy-bgp-down, 1 redundancy-pair-down). Investigate and return the structured result block.",
+    "should_trigger": true
+  },
+  {
+    "query": "The drift checker reports a tgw-prefix-leak from the dev route table into prod. Who changed it?",
+    "should_trigger": true
+  },
+  {
+    "query": "Why did the routing drift checker flag hybrid-path-wrong-exit-region for 10.100.0.0/16?",
+    "should_trigger": true
+  },
+  {
+    "query": "A Cloud WAN attachment ended up in the wrong segment according to the drift report. Find the policy change.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do BGP local preference communities 7224:7300 influence Direct Connect egress?",
+    "should_trigger": false
+  },
+  {
+    "query": "Our RDS instance has high read latency since this morning.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a Transit Gateway route table for the new staging VPC.",
+    "should_trigger": false
+  },
+  {
+    "query": "What does the Lambda error rate alarm on the drift checker mean?",
+    "should_trigger": false
+  }
+]

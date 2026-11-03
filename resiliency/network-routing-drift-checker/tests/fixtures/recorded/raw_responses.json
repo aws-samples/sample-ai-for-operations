@@ -1,0 +1,466 @@
+{
+  "cloudwan": {
+    "attachments": [],
+    "core_network": {
+      "CoreNetworkArn": "arn:aws:networkmanager::123456789012:core-network/core-network-00000000000000001",
+      "CoreNetworkId": "core-network-00000000000000001",
+      "CreatedAt": "2026-01-01T00:00:00+00:00",
+      "Edges": [
+        {
+          "Asn": 64512,
+          "EdgeLocation": "us-east-1",
+          "InsideCidrBlocks": []
+        }
+      ],
+      "GlobalNetworkId": "global-network-00000000000000001",
+      "Segments": [
+        {
+          "EdgeLocations": [
+            "us-east-1"
+          ],
+          "Name": "dev",
+          "SharedSegments": []
+        }
+      ],
+      "State": "AVAILABLE",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "test"
+        }
+      ]
+    },
+    "policy": {
+      "Alias": "LIVE, LATEST",
+      "ChangeSetState": "EXECUTION_SUCCEEDED",
+      "CoreNetworkId": "core-network-00000000000000001",
+      "CreatedAt": "2026-01-01T00:00:00+00:00",
+      "Description": "Initial version.",
+      "PolicyDocument": "{\n  \"version\" : \"2021.12\",\n  \"core-network-configuration\" : {\n    \"asn-ranges\" : [ \"64512-65534\" ],\n    \"edge-locations\" : [ {\n      \"location\" : \"us-east-1\"\n    } ]\n  },\n  \"segments\" : [ {\n    \"name\" : \"dev\"\n  } ]\n}",
+      "PolicyVersionId": 1
+    },
+    "route_tables": [
+      {
+        "edge": "us-east-1",
+        "routes": [],
+        "segment": "dev"
+      }
+    ]
+  },
+  "dx_gateways": {
+    "associations": [],
+    "gateways": [
+      {
+        "amazonSideAsn": 64512,
+        "directConnectGatewayId": "00000001-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "directConnectGatewayName": "Test-vif",
+        "directConnectGatewayState": "available",
+        "ownerAccount": "123456789012",
+        "tags": [],
+        "totalPrefixPoolAllocations": 0
+      },
+      {
+        "amazonSideAsn": 65061,
+        "directConnectGatewayId": "00000002-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "directConnectGatewayName": "dxgw-2dx-emealab",
+        "directConnectGatewayState": "available",
+        "ownerAccount": "123456789012",
+        "tags": [],
+        "totalPrefixPoolAllocations": 0
+      }
+    ]
+  },
+  "regions": {
+    "eu-central-1": {
+      "dx": {
+        "virtual_interfaces": []
+      },
+      "tgw": {
+        "attachments": [],
+        "route_tables": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-00000000000000002",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000001"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": false,
+            "DefaultPropagationRouteTable": false,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "RT-tgw01-to-tgw02"
+              }
+            ],
+            "TransitGatewayId": "tgw-00000000000000001",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000002"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": false,
+            "DefaultPropagationRouteTable": false,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "RT-Spoke1"
+              }
+            ],
+            "TransitGatewayId": "tgw-00000000000000001",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000003"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": false,
+            "DefaultPropagationRouteTable": false,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "rt-tgw01-spoke2"
+              }
+            ],
+            "TransitGatewayId": "tgw-00000000000000001",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000004"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": false,
+            "DefaultPropagationRouteTable": false,
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "RT-TGW01-from-DXGW"
+              }
+            ],
+            "TransitGatewayId": "tgw-00000000000000001",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000005"
+          }
+        ],
+        "routes": {
+          "tgw-rtb-00000000000000001": {
+            "routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "State": "blackhole",
+                "Type": "static"
+              },
+              {
+                "DestinationCidrBlock": "10.1.0.0/16",
+                "State": "blackhole",
+                "Type": "static"
+              }
+            ],
+            "truncated": false
+          },
+          "tgw-rtb-00000000000000002": {
+            "routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "State": "blackhole",
+                "Type": "static"
+              }
+            ],
+            "truncated": false
+          },
+          "tgw-rtb-00000000000000003": {
+            "routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "State": "blackhole",
+                "Type": "static"
+              }
+            ],
+            "truncated": false
+          },
+          "tgw-rtb-00000000000000004": {
+            "routes": [
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "State": "blackhole",
+                "Type": "static"
+              }
+            ],
+            "truncated": false
+          },
+          "tgw-rtb-00000000000000005": {
+            "routes": [],
+            "truncated": false
+          }
+        },
+        "transit_gateways": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "Description": "pbos",
+            "Options": {
+              "AmazonSideAsn": 64551,
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "disable",
+              "DefaultRouteTablePropagation": "disable",
+              "DnsSupport": "enable",
+              "EncryptionSupport": {
+                "EncryptionState": "disabled"
+              },
+              "MulticastSupport": "disable",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "123456789012",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "TGW01"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:eu-central-1:123456789012:transit-gateway/tgw-00000000000000001",
+            "TransitGatewayId": "tgw-00000000000000001"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "Description": "",
+            "Options": {
+              "AmazonSideAsn": 64512,
+              "AssociationDefaultRouteTableId": "tgw-rtb-00000000000000001",
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "enable",
+              "DefaultRouteTablePropagation": "enable",
+              "DnsSupport": "enable",
+              "EncryptionSupport": {
+                "EncryptionState": "disabled"
+              },
+              "MulticastSupport": "disable",
+              "PropagationDefaultRouteTableId": "tgw-rtb-00000000000000001",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "123456789012",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "TGWIngress"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:eu-central-1:123456789012:transit-gateway/tgw-00000000000000002",
+            "TransitGatewayId": "tgw-00000000000000002"
+          }
+        ]
+      }
+    },
+    "eu-west-1": {
+      "dx": {
+        "virtual_interfaces": []
+      },
+      "tgw": {
+        "attachments": [],
+        "route_tables": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-00000000000000005",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000008"
+          }
+        ],
+        "routes": {
+          "tgw-rtb-00000000000000008": {
+            "routes": [],
+            "truncated": false
+          }
+        },
+        "transit_gateways": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "Description": "",
+            "Options": {
+              "AmazonSideAsn": 65511,
+              "AssociationDefaultRouteTableId": "tgw-rtb-00000000000000008",
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "enable",
+              "DefaultRouteTablePropagation": "enable",
+              "DnsSupport": "enable",
+              "EncryptionSupport": {
+                "EncryptionState": "disabled"
+              },
+              "MulticastSupport": "disable",
+              "PropagationDefaultRouteTableId": "tgw-rtb-00000000000000008",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "123456789012",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "TGW-Ireland"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:eu-west-1:123456789012:transit-gateway/tgw-00000000000000005",
+            "TransitGatewayId": "tgw-00000000000000005"
+          }
+        ]
+      }
+    },
+    "us-east-1": {
+      "dx": {
+        "virtual_interfaces": []
+      },
+      "tgw": {
+        "attachments": [
+          {
+            "Association": {
+              "State": "associated",
+              "TransitGatewayRouteTableId": "tgw-rtb-00000000000000007"
+            },
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "ResourceId": "vpc-00000000000000001",
+            "ResourceOwnerId": "123456789012",
+            "ResourceType": "vpc",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "VPC-attachment"
+              }
+            ],
+            "TransitGatewayAttachmentId": "tgw-attach-00000000000000001",
+            "TransitGatewayId": "tgw-00000000000000004",
+            "TransitGatewayOwnerId": "123456789012"
+          }
+        ],
+        "route_tables": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-00000000000000003",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000006"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "DefaultAssociationRouteTable": true,
+            "DefaultPropagationRouteTable": true,
+            "State": "available",
+            "Tags": [],
+            "TransitGatewayId": "tgw-00000000000000004",
+            "TransitGatewayRouteTableId": "tgw-rtb-00000000000000007"
+          }
+        ],
+        "routes": {
+          "tgw-rtb-00000000000000006": {
+            "routes": [],
+            "truncated": false
+          },
+          "tgw-rtb-00000000000000007": {
+            "routes": [
+              {
+                "DestinationCidrBlock": "10.1.0.0/16",
+                "State": "active",
+                "TransitGatewayAttachments": [
+                  {
+                    "ResourceId": "vpc-00000000000000001",
+                    "ResourceType": "vpc",
+                    "TransitGatewayAttachmentId": "tgw-attach-00000000000000001"
+                  }
+                ],
+                "TransitGatewayRouteTableAnnouncementId": "",
+                "Type": "propagated"
+              },
+              {
+                "DestinationCidrBlock": "10.2.0.0/16",
+                "State": "active",
+                "TransitGatewayAttachments": [
+                  {
+                    "ResourceId": "vpc-00000000000000001",
+                    "ResourceType": "vpc",
+                    "TransitGatewayAttachmentId": "tgw-attach-00000000000000001"
+                  }
+                ],
+                "TransitGatewayRouteTableAnnouncementId": "",
+                "Type": "propagated"
+              },
+              {
+                "DestinationCidrBlock": "172.31.0.0/16",
+                "State": "blackhole",
+                "Type": "static"
+              }
+            ],
+            "truncated": false
+          }
+        },
+        "transit_gateways": [
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "Description": "",
+            "Options": {
+              "AmazonSideAsn": 64513,
+              "AssociationDefaultRouteTableId": "tgw-rtb-00000000000000006",
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "enable",
+              "DefaultRouteTablePropagation": "enable",
+              "DnsSupport": "enable",
+              "EncryptionSupport": {
+                "EncryptionState": "disabled"
+              },
+              "MulticastSupport": "disable",
+              "PropagationDefaultRouteTableId": "tgw-rtb-00000000000000006",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "123456789012",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "DM"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:us-east-1:123456789012:transit-gateway/tgw-00000000000000003",
+            "TransitGatewayId": "tgw-00000000000000003"
+          },
+          {
+            "CreationTime": "2026-01-01T00:00:00+00:00",
+            "Description": "",
+            "Options": {
+              "AmazonSideAsn": 65059,
+              "AssociationDefaultRouteTableId": "tgw-rtb-00000000000000007",
+              "AutoAcceptSharedAttachments": "disable",
+              "DefaultRouteTableAssociation": "enable",
+              "DefaultRouteTablePropagation": "enable",
+              "DnsSupport": "enable",
+              "EncryptionSupport": {
+                "EncryptionState": "disabled"
+              },
+              "MulticastSupport": "disable",
+              "PropagationDefaultRouteTableId": "tgw-rtb-00000000000000007",
+              "SecurityGroupReferencingSupport": "disable",
+              "VpnEcmpSupport": "enable"
+            },
+            "OwnerId": "123456789012",
+            "State": "available",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "test-vif"
+              }
+            ],
+            "TransitGatewayArn": "arn:aws:ec2:us-east-1:123456789012:transit-gateway/tgw-00000000000000004",
+            "TransitGatewayId": "tgw-00000000000000004"
+          }
+        ]
+      }
+    }
+  }
+}
