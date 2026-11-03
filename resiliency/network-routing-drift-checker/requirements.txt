@@ -1,0 +1,6 @@
+# Runtime dependencies bundled into the Lambda asset.
+# boto3/botocore are pinned and bundled (not taken from the Lambda runtime) so the
+# service models match the ones verified in Phase 0 (design.md D§14).
+boto3==1.43.111
+botocore==1.43.111
+PyYAML==6.0.3

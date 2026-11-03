@@ -1,0 +1,33 @@
+# Hybrid intent file for the network routing drift checker.
+# Copy, edit, then upload:  scripts/upload-intent.sh examples/routing-intent.example.yaml
+# Every section except `version` is optional. Delete the sections you don't need.
+
+version: 1
+
+# Which TGW route tables may see routes from which others (check 2 for Transit Gateway).
+# Names are Environment tag values or route table IDs (tgw-rtb-...), case-insensitive.
+# A table always sees itself. Tables you don't list here are not checked.
+tgw_isolation:
+  prod:   [shared]
+  dev:    [shared]
+  shared: [prod, dev]
+
+# Direct Connect redundancy pairs (check 4): both VIFs must be available with BGP up.
+dx_redundancy_pairs:
+  - name: frankfurt-site-a
+    members: [dxvif-0123abcd, dxvif-0456efgh]
+
+# Hybrid path intent (check 6). Each entry needs a prefix and at least one of
+# exit_region, preferred, backup. preferred/backup take a VIF, TGW attachment,
+# Cloud WAN attachment, VPN or Direct Connect gateway ID.
+hybrid_paths:
+  - prefix: 10.100.0.0/16
+    exit_region: eu-central-1
+  - prefix: 192.168.0.0/16
+    preferred: dxvif-0123abcd
+    backup: vpn-0abc1234
+
+# Optional Region scope. Non-empty lists replace the stack parameters.
+regions:
+  allow: []
+  exclude: []

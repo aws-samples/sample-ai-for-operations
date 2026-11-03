@@ -1,0 +1,32 @@
+Subject: Network routing drift 2026-10-15: 4 new, 1 known, 0 resolved (partly investigated)
+
+Network routing drift report 2026-10-15 (run r1)
+Drift findings: 4 new, 1 known, 0 resolved.
+2026-10-15: 6 of 6 checks run, 15 resources evaluated.
+
+
+INVESTIGATION (AWS DevOps Agent): 1 incident(s) from 1 of 2 batch(es), ranked by blast radius
+1. Orphaned static route blackholes 10.100.0.0/16 in prod
+   Confidence high; blast radius score 1110 (1 prefixes, 1 attachments, 1 domains, Environment=prod); present for 0 days.
+   Findings: f-00000000000000000001, f-00000000000000000002
+   Hypothesis: Hypothesis 1.
+   Actor: identified
+   Evidence:
+     - CloudTrail DeleteTransitGatewayVpcAttachment ev-1 at 2026-10-14T14:03:11Z by arn:aws:sts::123456789012:assumed-role/Net/jdoe
+     - observed tgw-rtb-0prd: 10.100.0.0/16 blackhole
+   Verify (read-only):
+     aws ec2 search-transit-gateway-routes --transit-gateway-route-table-id tgw-rtb-0prd --filters Name=state,Values=blackhole --region eu-central-1
+   Investigation: https://space.aidevops.global.app.aws/investigation/t1
+Not explained by the investigation: f-00000000000000000003
+Investigation batch 2 failed: timeout-running; its raw findings follow in NEW.
+
+NEW (4)
+- [blackhole-route] eu-central-1: Blackhole route 10.100.0.0/16 (static) in tgw-rtb-0prd. (id f-00000000000000000001)
+- [hybrid-path-prefix-not-found] global: Hybrid path 10.100.0.0/16: not installed. (id f-00000000000000000002)
+- [redundancy-bgp-down] eu-central-1: Redundancy pair 'fra-a': BGP peer of dxvif-0a down. (id f-00000000000000000003)
+- [tgw-prefix-leak] eu-west-1: Route table tgw-rtb-0dev has route 10.200.0.0/16 from prod. (id f-00000000000000000004)
+
+KNOWN (1)
+- [blackhole-route] us-east-1: Blackhole route 0.0.0.0/0 in tgw-rtb-0lab. (id f-00000000000000000009) - first seen 2026-10-13 (2 days)
+
+Full findings: s3://bucket/runs/r1/findings.json

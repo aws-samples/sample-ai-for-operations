@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "nrdc-investigation/v1",
+  "title": "network-routing-drift investigation result (design.md D§6.3)",
+  "description": "Canonical copy. The skill's references/output-schema.json (task 3.7) must be identical to this file.",
+  "type": "object",
+  "required": ["schema", "incidentId", "incidents", "unassigned_finding_ids"],
+  "properties": {
+    "schema": {"const": "nrdc-investigation/v1"},
+    "incidentId": {"type": "string", "pattern": "^nrdc-.+-[0-9]+$", "maxLength": 200},
+    "investigation_url": {"type": "string", "pattern": "^https://[^\\s]+$", "maxLength": 2048},
+    "incidents": {"type": "array", "maxItems": 200, "items": {"$ref": "#/$defs/incident"}},
+    "unassigned_finding_ids": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/finding_id"}},
+    "notes": {"type": "string", "maxLength": 4000}
+  },
+  "$defs": {
+    "finding_id": {"type": "string", "pattern": "^f-[0-9a-f]{20}$"},
+    "incident": {
+      "type": "object",
+      "required": ["rank", "title", "member_finding_ids", "root_cause_hypothesis", "confidence", "evidence",
+                   "actor_identified", "blast_radius", "stable_for", "validation_commands"],
+      "properties": {
+        "rank": {"type": "integer", "minimum": 1},
+        "title": {"type": "string", "minLength": 1, "maxLength": 300},
+        "member_finding_ids": {"type": "array", "minItems": 1, "maxItems": 1000,
+                               "items": {"$ref": "#/$defs/finding_id"}},
+        "root_cause_hypothesis": {"type": "string", "minLength": 1, "maxLength": 4000},
+        "confidence": {"enum": ["high", "medium", "low"]},
+        "evidence": {"type": "array", "maxItems": 50, "items": {"$ref": "#/$defs/evidence"}},
+        "actor_identified": {"type": "boolean"},
+        "blast_radius": {
+          "type": "object",
+          "required": ["prefixes", "attachments", "domains", "environment"],
+          "properties": {
+            "prefixes": {"type": "integer", "minimum": 0},
+            "attachments": {"type": "integer", "minimum": 0},
+            "domains": {"type": "integer", "minimum": 0},
+            "environment": {"type": "string", "maxLength": 100},
+            "score": {"type": "number", "minimum": 0}
+          }
+        },
+        "stable_for": {"type": "string",
+                       "pattern": "^P(?!$)([0-9]+Y)?([0-9]+M)?([0-9]+W)?([0-9]+D)?(T(?=[0-9])([0-9]+H)?([0-9]+M)?([0-9]+S)?)?$"},
+        "validation_commands": {
+          "type": "array", "maxItems": 20,
+          "items": {"type": "string", "maxLength": 1000,
+                    "pattern": "^aws [a-z0-9-]+ (describe|get|list|search)-[a-z0-9-]+"}
+        }
+      }
+    },
+    "evidence": {
+      "oneOf": [
+        {"type": "object", "required": ["type", "event_id"],
+         "properties": {"type": {"const": "cloudtrail"}, "event_id": {"type": "string", "minLength": 1},
+                        "event_name": {"type": "string"}, "time": {"type": "string"}, "actor": {"type": "string"}}},
+        {"type": "object", "required": ["type", "event_arn"],
+         "properties": {"type": {"const": "health"}, "event_arn": {"type": "string", "pattern": "^arn:"}}},
+        {"type": "object", "required": ["type", "resource", "observation"],
+         "properties": {"type": {"const": "state"}, "resource": {"type": "string", "minLength": 1},
+                        "observation": {"type": "string", "minLength": 1}}}
+      ]
+    }
+  }
+}

@@ -1,0 +1,201 @@
+{
+  "checks_run": [
+    "check1",
+    "check2",
+    "check3",
+    "check5"
+  ],
+  "checks_skipped": [
+    "check2-tgw",
+    "check4",
+    "check6"
+  ],
+  "findings": [
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "0.0.0.0/0",
+        "route_table_id": "tgw-rtb-00000000000000001",
+        "tags": {},
+        "tgw_id": "tgw-00000000000000002"
+      },
+      "expected": {},
+      "finding_id": "f-4ab2c0100b8ec274337f",
+      "identity": [
+        "0.0.0.0/0",
+        "tgw-rtb-00000000000000001"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 0.0.0.0/0 (static) in TGW route table tgw-rtb-00000000000000001.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "eu-central-1",
+      "severity": "drift"
+    },
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "0.0.0.0/0",
+        "route_table_id": "tgw-rtb-00000000000000002",
+        "tags": {
+          "Name": "RT-tgw01-to-tgw02"
+        },
+        "tgw_id": "tgw-00000000000000001"
+      },
+      "expected": {},
+      "finding_id": "f-9dbcb4130b722aafa946",
+      "identity": [
+        "0.0.0.0/0",
+        "tgw-rtb-00000000000000002"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 0.0.0.0/0 (static) in TGW route table tgw-rtb-00000000000000002.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "eu-central-1",
+      "severity": "drift"
+    },
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "0.0.0.0/0",
+        "route_table_id": "tgw-rtb-00000000000000003",
+        "tags": {
+          "Name": "RT-Spoke1"
+        },
+        "tgw_id": "tgw-00000000000000001"
+      },
+      "expected": {},
+      "finding_id": "f-25780929f518a78c3ca3",
+      "identity": [
+        "0.0.0.0/0",
+        "tgw-rtb-00000000000000003"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 0.0.0.0/0 (static) in TGW route table tgw-rtb-00000000000000003.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "eu-central-1",
+      "severity": "drift"
+    },
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "0.0.0.0/0",
+        "route_table_id": "tgw-rtb-00000000000000004",
+        "tags": {
+          "Name": "rt-tgw01-spoke2"
+        },
+        "tgw_id": "tgw-00000000000000001"
+      },
+      "expected": {},
+      "finding_id": "f-d88abb78da9604472170",
+      "identity": [
+        "0.0.0.0/0",
+        "tgw-rtb-00000000000000004"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 0.0.0.0/0 (static) in TGW route table tgw-rtb-00000000000000004.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "eu-central-1",
+      "severity": "drift"
+    },
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "10.1.0.0/16",
+        "route_table_id": "tgw-rtb-00000000000000001",
+        "tags": {},
+        "tgw_id": "tgw-00000000000000002"
+      },
+      "expected": {},
+      "finding_id": "f-682caf5238d3e3df9e37",
+      "identity": [
+        "10.1.0.0/16",
+        "tgw-rtb-00000000000000001"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 10.1.0.0/16 (static) in TGW route table tgw-rtb-00000000000000001.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "eu-central-1",
+      "severity": "drift"
+    },
+    {
+      "check": "check3",
+      "context": {
+        "platform": "tgw",
+        "prefix": "172.31.0.0/16",
+        "route_table_id": "tgw-rtb-00000000000000007",
+        "tags": {},
+        "tgw_id": "tgw-00000000000000004"
+      },
+      "expected": {},
+      "finding_id": "f-de3672dab5c799ba9cb9",
+      "identity": [
+        "172.31.0.0/16",
+        "tgw-rtb-00000000000000007"
+      ],
+      "kind": "blackhole-route",
+      "message": "Blackhole route 172.31.0.0/16 (static) in TGW route table tgw-rtb-00000000000000007.",
+      "observed": {
+        "state": "blackhole",
+        "type": "static"
+      },
+      "payload_hash": "933d5763a23bb8094a6ed08cd9b8d0472c90877b98daa1dbd0bc05afaa203e4d",
+      "region": "us-east-1",
+      "severity": "drift"
+    },
+    {
+      "check": "informational",
+      "context": {
+        "route_table_id": "tgw-rtb-00000000000000007",
+        "tag_key": "Environment"
+      },
+      "expected": {},
+      "finding_id": "f-6d515f6a6adf81c43807",
+      "identity": [
+        "tgw-rtb-00000000000000007"
+      ],
+      "kind": "untagged-route-table",
+      "message": "Route table tgw-rtb-00000000000000007 has no 'Environment' tag; 1 associated attachment(s) not verified.",
+      "observed": {
+        "attachments": [
+          "tgw-attach-00000000000000001"
+        ]
+      },
+      "payload_hash": "2d63371c83c967d713b52dc8227e1fa268fe32aadeb5c8e3c1da1ddadd961d2a",
+      "region": "us-east-1",
+      "severity": "informational"
+    }
+  ],
+  "regions_evaluated": [
+    "eu-central-1",
+    "eu-west-1",
+    "us-east-1"
+  ],
+  "regions_not_evaluated": {},
+  "resources_evaluated": 15,
+  "skip_reason": "intent file absent"
+}
