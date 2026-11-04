@@ -1,0 +1,9 @@
+# Runtime dependencies for the hosted container. Versions are those the test suite ran against.
+boto3==1.43.118
+mcp==2.1.1
+sqlglot==30.24.0
+pydantic==2.14.1
+PyYAML==6.0.3
+pyarrow==26.0.0
+strands-agents==1.62.0
+bedrock-agentcore==1.25.0

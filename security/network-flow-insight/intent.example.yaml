@@ -1,0 +1,35 @@
+# network-flow-insight intent file (schema version 1).
+# Generate a baseline from an observed window with `nfi intent --write intent.yaml`, prune it by hand,
+# commit it, and point NFI_INTENT_FILE at it. `nfi drift` and `nfi what-if` read it; nothing edits it.
+version: 1
+
+# Networks the agent cannot discover: on-premises ranges, partners, SaaS egress ranges.
+networks:
+  - name: on-prem-dc1
+    kind: on-premises          # on-premises | partner | saas | vpc | other
+    cidrs: ["10.200.0.0/16"]
+  - name: payments-partner
+    kind: partner
+    cidrs: ["203.0.113.0/24"]
+
+# Optional: your own destination buckets and what you expect for each.
+# The first matching bucket wins; the bucket with `default: true` catches the rest.
+buckets:
+  - name: not-subject-to-inspection
+    match: { services: ["S3", "DYNAMODB"], paths: ["gateway-endpoint"] }
+    disposition: allow         # allow | review | inspect
+  - name: candidate-for-private-path
+    match: { aws_service: true, paths: ["nat"] }
+    disposition: review
+  - name: subject-to-inspection
+    match: { default: true }
+    disposition: inspect
+
+# Produced by `nfi intent`, then pruned by a human. One entry per consumer, provider, port and path.
+baseline:
+  - consumer: { network: subnet-0example1 }          # a subnet (or /24 when no inventory is available)
+    provider: { bucket: aws-service, service: S3, port: 443, path: gateway-endpoint }
+    evidence: { bytes: 123456789, conversations: 42, first_seen: "2026-03-02", last_seen: "2026-03-08" }
+  - consumer: { network: subnet-0example1 }
+    provider: { bucket: named-network, network: on-prem-dc1, port: 1521, path: vgw-dx }
+    evidence: { bytes: 7500000, conversations: 3, first_seen: "2026-03-02", last_seen: "2026-03-08" }
