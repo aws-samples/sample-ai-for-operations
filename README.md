@@ -20,6 +20,7 @@ Each agent is a self-contained, deployable solution that follows a common patter
 | **Resiliency** | [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) | Read-only daily check that AWS Cloud WAN, AWS Transit Gateway and AWS Direct Connect routing still matches the intended design — wrong routing domain, prefix leaks, blackhole routes, route/prefix limits, Direct Connect redundancy and hybrid path intent. Publishes a heartbeat or drift report to Amazon SNS; optionally hands new findings to AWS DevOps Agent for investigation | Available |
 | **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
 | **Security** | [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | Read-only CLI (no AI agent) that finds the long-lived credentials in an account or organization that can invoke Amazon Bedrock models, and assigns each a risk tier with a recommended action | Available |
+| **Security** | [Network Flow Insight](security/network-flow-insight/) | Analyses VPC Flow Logs with Amazon Athena to show where traffic goes and what it costs (NAT gateways, Transit Gateway, VPC endpoints, cross-AZ), states its confidence tier and reconciles against CloudWatch NAT metrics and optional billing data. Read-only by default; runs as a CLI, an MCP server or a hosted Amazon Bedrock AgentCore agent | Available |
 
 ### Choosing a Health agent
 
@@ -50,7 +51,8 @@ sample-ai-agents-for-operations/
 │   └── network-routing-drift-checker/   # Daily Cloud WAN / Transit Gateway / Direct Connect routing drift check
 ├── security/                        # Security posture domain
 │   ├── access-key-compromise-responder/ # Access-key compromise investigation + recommendations
-│   └── bedrock-permissions-audit/       # Long-lived credential exposure audit for Amazon Bedrock
+│   ├── bedrock-permissions-audit/       # Long-lived credential exposure audit for Amazon Bedrock
+│   └── network-flow-insight/            # VPC Flow Logs traffic and cost analysis (NAT, Transit Gateway, endpoints)
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
 └── LICENSE
