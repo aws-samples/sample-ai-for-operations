@@ -20,6 +20,7 @@ Each agent is a self-contained, deployable solution that follows a common patter
 | **Resiliency** | [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) | Read-only daily check that AWS Cloud WAN, AWS Transit Gateway and AWS Direct Connect routing still matches the intended design — wrong routing domain, prefix leaks, blackhole routes, route/prefix limits, Direct Connect redundancy and hybrid path intent. Publishes a heartbeat or drift report to Amazon SNS; optionally hands new findings to AWS DevOps Agent for investigation | Available |
 | **Security** | [AKC Responder](security/access-key-compromise-responder/) | Event-driven, advisory investigation of compromised or exposed AWS access keys — invokes the AWS DevOps Agent to analyze CloudTrail activity and produce human-run containment recommendations (never mutates resources) | Available |
 | **Security** | [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | Read-only CLI (no AI agent) that finds the long-lived credentials in an account or organization that can invoke Amazon Bedrock models, and assigns each a risk tier with a recommended action | Available |
+| **Security** | [Network Flow Insight](security/network-flow-insight/) | Read-only analysis of VPC Flow Logs already in Amazon S3, queried through Amazon Athena — produces an evidence pack of internet egress by path, cross-Region and cross-VPC traffic, how AWS services are reached (NAT gateway or VPC endpoint), and rejected traffic, reconciled against NAT gateway CloudWatch metrics. Supports drift reports against an agreed baseline. Runs locally, as an MCP server for your assistant, or on Bedrock AgentCore Runtime | Available |
 
 ### Choosing a Health agent
 
@@ -36,9 +37,9 @@ The two Health agents take different approaches and deploy independently. The No
 ## Repository Structure
 
 ```
-sample-ai-agents-for-operations/
+sample-ai-for-operations/
 ├── health/                          # Health & availability domain
-│   ├── aws-health-notification-agent/   # PHD event classification + remediation
+│   ├── aws-health-notification-agent/   # AWS Health Dashboard event classification + remediation
 │   └── aws-health-event-triage-agent/   # Organization-wide Health event triage + routing
 ├── observability/                   # Monitoring & observability domain
 │   └── mio-agent/                       # Observability maturity assessment + gap reports
@@ -50,7 +51,8 @@ sample-ai-agents-for-operations/
 │   └── network-routing-drift-checker/   # Daily Cloud WAN / Transit Gateway / Direct Connect routing drift check
 ├── security/                        # Security posture domain
 │   ├── access-key-compromise-responder/ # Access-key compromise investigation + recommendations
-│   └── bedrock-permissions-audit/       # Long-lived credential exposure audit for Amazon Bedrock
+│   ├── bedrock-permissions-audit/       # Long-lived credential exposure audit for Amazon Bedrock
+│   └── network-flow-insight/            # VPC Flow Logs traffic evidence pack + drift against a baseline
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
 └── LICENSE
@@ -87,21 +89,29 @@ Where today's agents sit:
 
 - **MIO Agent** — L0–L1. Read-only by design; it reports findings and recommends fixes but holds no write permissions in your account.
 - **Bedrock Quota Assistant** — L1–L2. Analysis and drafting are autonomous; submitting a quota increase support case (its only mutating action) requires explicit user confirmation.
+- **AWS Health Event Triage Agent** — L0–L1. Classification, urgency scoring and routing are autonomous; it is read-only against your AWS accounts and ships no mutating actions (see its `MUTATING_ACTIONS.md`). The optional AWS DevOps Agent investigation enriches events that deterministic code has already routed.
 - **AWS Health Notification Agent** — L1–L2. Classification and ticket creation are autonomous; remediation runs only after human approval.
 - **Network Routing Drift Checker** — L0. Read-only by design; it reports drift and holds no write permissions on your network. The optional AWS DevOps Agent investigation explains findings that deterministic code has already decided and does not change them.
+- **Network Flow Insight** — L0. Read-only against your environment; every figure is computed by code, and the model only interprets them. Its only writes go to resources it creates (an aggregate Glue table, and in the hosted deployment its report bucket), and the aggregate table is created only when you opt in.
+- **AKC Responder** — L1. The AWS DevOps Agent investigation runs automatically and is read-only; it produces containment recommendations that a human reviews and runs. Nothing is quarantined, stopped or deleted automatically.
+- **Bedrock Permissions Audit** — L0. A read-only CLI that reports findings and recommended actions; it never creates, changes or deletes anything, and a test fails the build if any code or shipped IAM policy could write.
 - **DART Agent** — L1–L2. Dataset analysis is read-only and autonomous; safe fixes are written to a new cleaned dataset (the original is never modified), and riskier fixes are queued for your approval.
 
 ## Technology Stack
 
-Every agent is written in Python 3.12+, defines its infrastructure as code, and deploys with a single command. Most agents reason with Amazon Bedrock (Claude Sonnet by default, configurable); the Network Routing Drift Checker makes its decisions in deterministic code and optionally uses AWS DevOps Agent for investigation. The framework, runtime, and IaC tool vary by agent:
+Every agent is written in Python 3.12+, and every deployable agent defines its infrastructure as code and deploys with a single command. Most agents reason with Amazon Bedrock (Claude Sonnet by default, configurable). The Network Routing Drift Checker makes its decisions in deterministic code and optionally uses AWS DevOps Agent for investigation, the AKC Responder hands its investigation to AWS DevOps Agent, and the Bedrock Permissions Audit is a command-line tool with no AI model. The framework, runtime, and IaC tool vary by agent:
 
 | Agent | Agent Framework | Runtime | Infrastructure | Deploy |
 |---|---|---|---|---|
 | [AWS Health Notification Agent](health/aws-health-notification-agent/) | [Strands Agents](https://github.com/strands-agents/sdk-python) | Bedrock AgentCore Runtime + Lambda | CloudFormation (SAM transform) | `./deploy.sh` |
+| [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/) | [Strands Agents](https://github.com/strands-agents/sdk-python) on Lambda; optional AWS DevOps Agent investigation | AWS Step Functions + Lambda | AWS CDK v2 (TypeScript) | `cdk deploy --all` |
 | [MIO Agent](observability/mio-agent/) | Multi-agent coordinator on the Bedrock Converse API (boto3) | AWS Lambda + API Gateway | AWS CDK v2 (Python) | `cdk deploy` |
 | [Bedrock Quota Assistant](governance/bedrock-quota-assistant/) | [Strands Agents](https://github.com/strands-agents/sdk-python) | Bedrock AgentCore Runtime (container) | AWS CDK v2 (Python) | `make deploy` |
 | [DART Agent](governance/dart-agent/) | [Strands Agents](https://github.com/strands-agents/sdk-python) | Amazon ECS Fargate task (container) | AWS CDK v2 (TypeScript) | `make deploy-staging` |
 | [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) | Deterministic checks; optional AWS DevOps Agent investigation | AWS Step Functions + Lambda | AWS CDK v2 (TypeScript) | `scripts/deploy.sh` |
+| [AKC Responder](security/access-key-compromise-responder/) | AWS DevOps Agent (managed) with a packaged investigation skill | AWS Step Functions + Lambda | CloudFormation (SAM transform) | `./deploy.sh` |
+| [Bedrock Permissions Audit](security/bedrock-permissions-audit/) | None (read-only CLI, no AI model) | Local CLI | Optional CloudFormation read-only audit role for member accounts | `pip install .` |
+| [Network Flow Insight](security/network-flow-insight/) | [Strands Agents](https://github.com/strands-agents/sdk-python); MCP server mode with no model of its own | Local CLI, or Bedrock AgentCore Runtime + EventBridge Scheduler | AWS CDK v2 (TypeScript) | `make deploy` |
 
 Individual agents may add domain-specific integrations (Jira, Slack, AgentCore Memory, MCP servers, etc.) documented in their own README.
 
@@ -110,13 +120,16 @@ Individual agents may add domain-specific integrations (Jira, Slack, AgentCore M
 Each agent has its own README with prerequisites and deployment instructions. Clone the repository, change into the agent folder, and run its one-command deploy:
 
 ```bash
-git clone https://github.com/aws-samples/sample-ai-agents-for-operations.git
-cd sample-ai-agents-for-operations
+git clone https://github.com/aws-samples/sample-ai-for-operations.git
+cd sample-ai-for-operations
 ```
 
 Then pick one agent (all paths are relative to the repository root):
 
 ```bash
+# Health — AWS Health Event Triage Agent (see its QUICKSTART.md for CDK bootstrap and org-wide setup)
+(cd health/aws-health-event-triage-agent/infra && npm install && cdk deploy --all)
+
 # Health — AWS Health Notification Agent
 (cd health/aws-health-notification-agent && ./deploy.sh)
 
@@ -131,6 +144,15 @@ Then pick one agent (all paths are relative to the repository root):
 
 # Resiliency — Network Routing Drift Checker (copy deploy.env.example to .deploy.env and set SCHEDULE_TIMEZONE first)
 (cd resiliency/network-routing-drift-checker && scripts/deploy.sh)
+
+# Security — AKC Responder (upload its skill to your AWS DevOps Agent Space first; see its README)
+(cd security/access-key-compromise-responder && ./deploy.sh)
+
+# Security — Bedrock Permissions Audit (read-only CLI; audits the account your credentials belong to)
+(cd security/bedrock-permissions-audit && pip install . && bedrock-audit --single-account)
+
+# Security — Network Flow Insight (synthetic demo, no AWS access needed; see its README to deploy)
+(cd security/network-flow-insight && make install && make demo)
 ```
 
 Note that the DART Agent deploys standing infrastructure including a NAT gateway (~$32/month), so run `cdk destroy` when you are not using it.
@@ -141,19 +163,19 @@ The agents are independent, so you do not need the whole repository to deploy on
 
 ```bash
 git clone --depth 1 --filter=blob:none --sparse \
-  https://github.com/aws-samples/sample-ai-agents-for-operations.git
-cd sample-ai-agents-for-operations
+  https://github.com/aws-samples/sample-ai-for-operations.git
+cd sample-ai-for-operations
 git sparse-checkout set governance/dart-agent
 ```
 
-Substitute any agent path — `health/aws-health-notification-agent`, `observability/mio-agent`, `governance/bedrock-quota-assistant`, `governance/dart-agent`, `resiliency/network-routing-drift-checker`. Add more later with `git sparse-checkout add <path>`.
+Substitute any agent path — `health/aws-health-event-triage-agent`, `health/aws-health-notification-agent`, `observability/mio-agent`, `governance/bedrock-quota-assistant`, `governance/dart-agent`, `resiliency/network-routing-drift-checker`, `security/access-key-compromise-responder`, `security/bedrock-permissions-audit`, `security/network-flow-insight`. Add more later with `git sparse-checkout add <path>`.
 
 `--filter=blob:none` skips downloading file contents outside your chosen folder and `--sparse` starts with only root-level files checked out, so you never materialise the other agents. Root-level files (`README.md`, `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`) are always included. You keep a working git remote, so `git pull` picks up updates to your agent as normal.
 
 If you want the files without any git metadata — for a one-off evaluation, or inside a container build — extract the folder straight from a tarball:
 
 ```bash
-curl -sL https://github.com/aws-samples/sample-ai-agents-for-operations/tarball/main \
+curl -sL https://github.com/aws-samples/sample-ai-for-operations/tarball/main \
   | tar xz --strip-components=3 '*/governance/dart-agent'
 ```
 
@@ -163,7 +185,7 @@ Start with the [AWS Health Event Triage Agent](health/aws-health-event-triage-ag
 
 ## Customise with Kiro IDE
 
-These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/), [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), [DART Agent](governance/dart-agent/), and [Network Routing Drift Checker](resiliency/network-routing-drift-checker/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
+These sample agents are designed to be customised using [Kiro IDE](https://kiro.dev)'s **spec-driven development** workflow. The [AWS Health Event Triage Agent](health/aws-health-event-triage-agent/), [AWS Health Notification Agent](health/aws-health-notification-agent/), [Bedrock Quota Assistant](governance/bedrock-quota-assistant/), [DART Agent](governance/dart-agent/), [Network Routing Drift Checker](resiliency/network-routing-drift-checker/), [AKC Responder](security/access-key-compromise-responder/), [Bedrock Permissions Audit](security/bedrock-permissions-audit/), and [Network Flow Insight](security/network-flow-insight/) ship with a `.kiro/specs/` folder containing structured specification files that Kiro uses to understand the agent's architecture and guide your modifications. Agents without specs can still be customised — Kiro will generate specs from the existing code.
 
 ```
 <agent>/.kiro/specs/
@@ -200,6 +222,7 @@ You don't need to write specs manually — Kiro builds them from your natural la
 | Extend quota coverage to another service | "Check SageMaker endpoint quotas alongside Bedrock quotas" |
 | Add a dataset quality check | "Add a toxicity check to the DART pre-flight report and include it in the score" |
 | Add a routing check | "Add a check that flags Transit Gateway peering attachments missing a route table association" |
+| Add a flow-log report section | "Add a section to the Network Flow Insight report that breaks down internet egress by destination port" |
 
 Kiro uses the existing specs as architectural context — it understands how the current integrations work and generates changes that fit the established patterns.
 
@@ -218,8 +241,7 @@ If you build an agent that solves an operational challenge and want to share it,
 
 Every agent in this repository follows these standards:
 
-- Deploy with a single command (`deploy.sh`)
-- Work in the deployer's own AWS account (no cross-account assumptions)
+- Deploy into your own AWS account; any cross-account or organization-wide access is a setup step you choose, uses read-only permissions, and is documented in the agent's README
 - Default to read-only IAM permissions (mutations require explicit opt-in)
 - Include human-in-the-loop for any infrastructure-modifying actions
 - Document failure modes and blast radius for mutating actions
