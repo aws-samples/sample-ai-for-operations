@@ -1,0 +1,64 @@
+{
+  "_comment": "Reference read-only execution policy for the byoc-infra-discovery Lambda. The CDK stack (infra/lib) implements this exact posture. No mutating actions on any AWS environment. Replace ACCOUNT_ID / GUARDRAIL_ID / LOG_GROUP at synth time via CDK; 123456789012 is a placeholder.",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadGlobalInfrastructureParameters",
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameter", "ssm:GetParameters", "ssm:GetParametersByPath"],
+      "Resource": "arn:aws:ssm:*::parameter/aws/service/global-infrastructure/*"
+    },
+    {
+      "Sid": "ReadPublicAmiParameters",
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameter", "ssm:GetParameters"],
+      "Resource": "arn:aws:ssm:*::parameter/aws/service/*"
+    },
+    {
+      "Sid": "ReadPricing",
+      "Effect": "Allow",
+      "Action": ["pricing:GetProducts"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DescribeReadOnlyEc2",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeRegions",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DescribeInstanceTypeOfferings",
+        "ec2:DescribeImages"
+      ],
+      "Resource": "*"
+    },
+    {
+      "_comment": "Current Claude models invoke via an inference profile; allow BOTH the profile ARN and the underlying foundation-model ARN (in any region the profile routes to).",
+      "Sid": "InvokeBedrockModel",
+      "Effect": "Allow",
+      "Action": ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0",
+        "arn:aws:bedrock:*:123456789012:inference-profile/us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+      ]
+    },
+    {
+      "Sid": "ApplyGuardrail",
+      "Effect": "Allow",
+      "Action": ["bedrock:ApplyGuardrail"],
+      "Resource": "arn:aws:bedrock:*:123456789012:guardrail/GUARDRAIL_ID"
+    },
+    {
+      "Sid": "WriteOwnLogs",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": "arn:aws:logs:*:123456789012:log-group:/aws/lambda/byoc-infra-discovery:*"
+    },
+    {
+      "Sid": "XRayTracing",
+      "Effect": "Allow",
+      "Action": ["xray:PutTraceSegments", "xray:PutTelemetryRecords"],
+      "Resource": "*"
+    }
+  ]
+}

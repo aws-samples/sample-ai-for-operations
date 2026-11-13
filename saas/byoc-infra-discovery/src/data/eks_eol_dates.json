@@ -1,0 +1,17 @@
+{
+  "_dataset": "eks_eol_dates",
+  "_description": "Amazon EKS Kubernetes version end-of-standard-support dates (YYYY-MM-DD).",
+  "_source": "https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html",
+  "_last_updated": "2026-09-30",
+  "_note": "No public API exposes these dates; maintained from the EKS Kubernetes versions documentation.",
+  "data": {
+    "1.26": "2024-06-11",
+    "1.27": "2024-07-24",
+    "1.28": "2024-11-26",
+    "1.29": "2025-03-23",
+    "1.30": "2025-07-23",
+    "1.31": "2025-11-26",
+    "1.32": "2026-03-23",
+    "1.33": "2026-07-23"
+  }
+}
