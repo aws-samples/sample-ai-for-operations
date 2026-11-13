@@ -1,0 +1,24 @@
+{
+  "name": "byoc-infra-discovery-infra",
+  "version": "0.1.0",
+  "description": "CDK v2 infrastructure for the BYOC Infrastructure Discovery Agent",
+  "license": "MIT",
+  "bin": {
+    "app": "bin/app.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy --require-approval never"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "aws-cdk": "2.1143.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.271.0",
+    "constructs": "10.8.1"
+  }
+}

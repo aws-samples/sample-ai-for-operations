@@ -1,0 +1,30 @@
+{
+  "_dataset": "eni_max_pods",
+  "_description": "Maximum pods per instance type for the Amazon VPC CNI (ENI-based), used for pre-calculating node capacity.",
+  "_source": "https://raw.githubusercontent.com/aws/amazon-vpc-cni-k8s/master/misc/eni-max-pods.txt",
+  "_last_updated": "2026-09-30",
+  "_note": "Maintained subset of common instance types. Authoritative per-node value should be read live from the node when precision is required; this pre-calc table lags newly launched instance types.",
+  "data": {
+    "t3.medium": 17,
+    "t3.large": 35,
+    "t3.xlarge": 58,
+    "t3.2xlarge": 58,
+    "m5.large": 29,
+    "m5.xlarge": 58,
+    "m5.2xlarge": 58,
+    "m5.4xlarge": 234,
+    "m6i.large": 29,
+    "m6i.xlarge": 58,
+    "m6i.2xlarge": 58,
+    "m6i.4xlarge": 234,
+    "c5.large": 29,
+    "c5.xlarge": 58,
+    "c5.2xlarge": 58,
+    "c6i.large": 29,
+    "c6i.xlarge": 58,
+    "r5.large": 29,
+    "r5.xlarge": 58,
+    "r6i.large": 29,
+    "r6i.xlarge": 58
+  }
+}
