@@ -1,0 +1,70 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "saas-readiness-agent"
+version = "0.3.5"
+description = "AI agent that assesses whether an AWS-hosted product behaves like scalable, multi-tenant SaaS"
+readme = "README.md"
+license = "MIT-0"
+requires-python = ">=3.12, <4"
+authors = [
+    { name = "AWS TAM" }
+]
+keywords = ["aws", "saas", "saas-readiness", "strands-agents", "mcp", "bedrock"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT No Attribution License (MIT-0)",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+
+dependencies = [
+    "strands-agents>=1.48.0,<2",
+    "strands-agents-bedrock>=0.0.1,<1",
+    "boto3>=1.43.54,<2",
+    "bedrock-agentcore>=1.18.1,<2",
+    "mcp>=1.30.0,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.4.1",
+    "coverage==7.9.2",
+    "mypy==1.17.0",
+    "ruff==0.12.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/aws-samples/sample-ai-agents-for-operations/tree/main/saas/saas-readiness-agent"
+Repository = "https://github.com/aws-samples/sample-ai-agents-for-operations"
+Issues = "https://github.com/aws-samples/sample-ai-agents-for-operations/issues"
+
+[project.scripts]
+saas-readiness-agent = "src.agent:main"
+saas-readiness-assess = "src.assessment_core:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+files = ["src"]

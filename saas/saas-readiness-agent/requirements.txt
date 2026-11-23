@@ -1,0 +1,11 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+# Pinned versions for reproducible builds. pyproject.toml defines bounded
+# compatible ranges; this file locks the tested versions. Run `pip install
+# --upgrade` periodically and re-test to pick up security patches.
+strands-agents==1.48.0
+strands-agents-bedrock==0.0.1
+boto3==1.43.54
+bedrock-agentcore==1.18.1
+mcp[cli]==1.30.0

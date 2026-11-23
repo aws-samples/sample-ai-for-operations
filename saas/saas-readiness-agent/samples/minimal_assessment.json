@@ -1,0 +1,134 @@
+{
+  "scope": {
+    "assessment_id": "sample-local",
+    "scope_type": "single-account",
+    "access_mode": "minimum_read_only",
+    "regions": ["eu-west-1"],
+    "notes": ["Synthetic sample. Do not include customer identifiers in fixtures."]
+  },
+  "business_context": {
+    "stage": "launch",
+    "target_segment": "B2B SMB",
+    "pricing_model": "tiered",
+    "tenancy_model": "pooled",
+    "growth_pressure": "first production tenants",
+    "answers": [
+      {
+        "question_id": "BQ-004",
+        "answer_value": "pooled",
+        "source": "sample",
+        "timestamp": "2026-07-21T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-025",
+        "answer_value": "planned",
+        "source": "sample",
+        "timestamp": "2026-07-21T00:00:00Z",
+        "changed": false
+      }
+    ]
+  },
+  "facts": {
+    "services": ["apigateway", "lambda", "dynamodb", "ec2", "postgresql", "s3", "kms", "elasticache", "sqs"],
+    "shared_resources": true,
+    "missing_permissions": ["ce:GetCostAndUsage"],
+    "signals": {
+      "self_managed_database_on_ec2": {
+        "inspected": true,
+        "detected": true,
+        "engine": "PostgreSQL",
+        "tenant_isolation_detected": false,
+        "tenant_metrics_detected": false,
+        "tenant_consumption_detected": false
+      },
+      "iac": {
+        "inspected": true,
+        "detected": false
+      },
+      "tenant_telemetry": {
+        "inspected": true,
+        "detected": false
+      },
+      "tenant_alarms": {
+        "inspected": true,
+        "detected": false,
+        "any_alarms": true
+      }
+    }
+  },
+  "evidence": [
+    {
+      "control_id": "TAI-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Team describes a pooled tenancy model, but the AWS footprint has not been collected yet.",
+      "source": "sample"
+    },
+    {
+      "control_id": "TAI-02",
+      "status": "missing",
+      "confidence": "low",
+      "evidence_state": "unknown",
+      "summary": "No evidence was supplied for enforced tenant isolation boundaries on shared resources.",
+      "source": "sample"
+    },
+    {
+      "control_id": "ITC-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Login exists, but the authoritative tenant claim and edge propagation pattern are not yet documented.",
+      "source": "sample"
+    },
+    {
+      "control_id": "TLO-01",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Tenant metadata is currently tracked outside the platform in a manual launch tracker.",
+      "source": "sample"
+    },
+    {
+      "control_id": "TLO-02",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Tenant onboarding is performed manually by engineering for the sample launch process.",
+      "source": "sample"
+    },
+    {
+      "control_id": "OOR-01",
+      "status": "partial",
+      "confidence": "low",
+      "evidence_state": "suggestive",
+      "summary": "Application logs exist, but tenant-safe dimensions are not consistently present.",
+      "source": "sample"
+    },
+    {
+      "control_id": "DPA-02",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Deployments are scripted, but promotion and rollback criteria are not yet standardized.",
+      "source": "sample"
+    },
+    {
+      "control_id": "CAM-02",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Tiered pricing is planned, but no billing-ready tenant usage events are captured.",
+      "source": "sample"
+    },
+    {
+      "control_id": "SBR-01",
+      "status": "met",
+      "confidence": "high",
+      "evidence_state": "confirmed",
+      "summary": "The offering is in launch stage and targets B2B SMB early adopters.",
+      "source": "sample"
+    }
+  ]
+}
