@@ -1,0 +1,51 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SaasReadinessReadOnlyDiscovery",
+      "Effect": "Allow",
+      "Action": [
+        "acm:ListCertificates",
+        "apigateway:GET",
+        "bedrock-agentcore:ListAgentRuntimes",
+        "bedrock-agentcore:ListGateways",
+        "ce:GetCostAndUsage",
+        "ce:GetTagsOrValues",
+        "cloudformation:ListStacks",
+        "cloudfront:ListDistributions",
+        "cloudtrail:DescribeTrails",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:ListMetrics",
+        "cognito-idp:ListUserPools",
+        "controltower:ListLandingZones",
+        "dynamodb:DescribeTable",
+        "dynamodb:ListTables",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVpcs",
+        "ecs:ListClusters",
+        "eks:ListClusters",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "iam:SimulatePrincipalPolicy",
+        "lambda:ListFunctions",
+        "logs:DescribeLogGroups",
+        "organizations:DescribeOrganization",
+        "organizations:ListAccounts",
+        "rds:DescribeDBInstances",
+        "route53:ListHostedZones",
+        "s3:ListAllMyBuckets",
+        "s3vectors:ListIndexes",
+        "s3vectors:ListVectorBuckets",
+        "secretsmanager:ListSecrets",
+        "sts:GetCallerIdentity",
+        "tag:GetResources",
+        "tag:GetTagKeys",
+        "wafv2:ListWebACLs"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

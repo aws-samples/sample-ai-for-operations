@@ -1,0 +1,25 @@
+{
+  "name": "saas-readiness-agent-guardrail",
+  "description": "Content, prompt-attack, and sensitive-information filters for the SaaS Readiness Agent.",
+  "blockedInputMessaging": "Sorry, I can't process that request. Please rephrase it without sensitive or harmful content.",
+  "blockedOutputsMessaging": "Sorry, I can't return that response.",
+  "contentPolicyConfig": {
+    "filtersConfig": [
+      { "type": "PROMPT_ATTACK", "inputStrength": "HIGH", "outputStrength": "NONE" },
+      { "type": "MISCONDUCT", "inputStrength": "HIGH", "outputStrength": "HIGH" },
+      { "type": "HATE", "inputStrength": "HIGH", "outputStrength": "HIGH" },
+      { "type": "INSULTS", "inputStrength": "HIGH", "outputStrength": "HIGH" },
+      { "type": "SEXUAL", "inputStrength": "HIGH", "outputStrength": "HIGH" },
+      { "type": "VIOLENCE", "inputStrength": "HIGH", "outputStrength": "HIGH" }
+    ]
+  },
+  "sensitiveInformationPolicyConfig": {
+    "piiEntitiesConfig": [
+      { "type": "AWS_ACCESS_KEY", "action": "BLOCK" },
+      { "type": "AWS_SECRET_KEY", "action": "BLOCK" },
+      { "type": "PASSWORD", "action": "BLOCK" },
+      { "type": "EMAIL", "action": "ANONYMIZE" },
+      { "type": "PHONE", "action": "ANONYMIZE" }
+    ]
+  }
+}

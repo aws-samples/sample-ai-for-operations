@@ -1,0 +1,311 @@
+{
+  "scope": {
+    "assessment_id": "mixed-enterprise-isv",
+    "scope_type": "single-account",
+    "access_mode": "minimum_read_only",
+    "regions": ["eu-west-1", "us-east-1"],
+    "notes": [
+      "Synthetic sample: enterprise ISV scaling from 10 to 100 tenants.",
+      "Hybrid tenancy — some tenants on dedicated RDS, most share pooled EKS + DynamoDB.",
+      "Do not include customer identifiers in fixtures."
+    ]
+  },
+  "business_context": {
+    "stage": "early customers",
+    "target_segment": "enterprise",
+    "pricing_model": "usage-based",
+    "tenancy_model": "hybrid",
+    "growth_pressure": "scale from single digits to dozens/hundreds of tenants",
+    "answers": [
+      {
+        "question_id": "BQ-001",
+        "answer_value": "early customers",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-002",
+        "answer_value": "enterprise",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-003",
+        "answer_value": "usage-based",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-004",
+        "answer_value": "hybrid",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-005",
+        "answer_value": "scale from single digits to dozens/hundreds of tenants",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-007",
+        "answer_value": "shared database with no tenant_id enforcement at data layer",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-008",
+        "answer_value": "no",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-011",
+        "answer_value": "nothing standardized",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-012",
+        "answer_value": "consistently passed",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-013",
+        "answer_value": "yes checks tenant ID",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-015",
+        "answer_value": "partial",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-016",
+        "answer_value": "partially automated",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-019",
+        "answer_value": "fleet-wide only",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-025",
+        "answer_value": "no",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      },
+      {
+        "question_id": "BQ-030",
+        "answer_value": "moving toward SaaS",
+        "source": "sample",
+        "timestamp": "2026-07-23T00:00:00Z",
+        "changed": false
+      }
+    ]
+  },
+  "facts": {
+    "services": ["eks", "dynamodb", "rds", "aurora", "s3", "kms", "lambda", "apigateway", "cognito", "sqs", "elasticache", "cloudwatch", "cloudtrail"],
+    "shared_resources": true,
+    "missing_permissions": [],
+    "signals": {
+      "iac": {
+        "inspected": true,
+        "detected": true,
+        "stack_count": 18
+      },
+      "tenant_telemetry": {
+        "inspected": true,
+        "detected": true,
+        "partial": true
+      },
+      "tenant_alarms": {
+        "inspected": true,
+        "detected": false,
+        "any_alarms": true
+      },
+      "cost_allocation_tags": {
+        "inspected": true,
+        "detected": false
+      },
+      "tenant_registry": {
+        "inspected": true,
+        "detected": true,
+        "partial": true,
+        "has_identity": true,
+        "has_status": true,
+        "has_tier": false
+      },
+      "self_managed_database_on_ec2": {
+        "inspected": true,
+        "detected": false
+      }
+    }
+  },
+  "evidence": [
+    {
+      "control_id": "TAI-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Team describes hybrid tenancy (pooled default + dedicated for enterprise), but the model is not formally documented or validated against actual deployment.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TAI-02",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Dedicated-database tenants have strong isolation at the DB layer. Pooled tenants share databases with separate EKS pods but no tenant_id enforcement at the data-access layer.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TAI-03",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "No tenant-context-based data access enforcement for shared database tenants. Application code must manually filter by tenant — no shared library, middleware, or row-level security.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TAI-04",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "No rate limits, quotas, or per-tenant throttling on shared resources. One tenant can consume disproportionate compute, DB connections, or storage.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TAI-05",
+      "status": "met",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Dedicated tenants are deployed and upgraded through the same automated release process as pooled tenants.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "ITC-01",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "No standardized mechanism establishes tenant identity at request entry. Tenant context is determined ad-hoc per service.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "ITC-02",
+      "status": "met",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Once established, tenant context is consistently propagated through internal service calls, background jobs, and async events.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "ITC-03",
+      "status": "met",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Authorization and data-access paths consume tenant context to scope responses.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "ITC-05",
+      "status": "met",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Admin/support and machine-to-machine credentials have tenant-scoped access rather than broad global access.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TLO-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Partial tenant registry exists — tracks tenant identity and status, but missing plan/tier information.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TLO-02",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Infrastructure provisioning is automated, but tier/config setup still requires manual engineering steps.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "TLO-05",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "No defined offboarding process. Tenant data retention/deletion and access revocation are manual and ad-hoc.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "OOR-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Some tenant context appears in telemetry, but not consistently across all services. CloudWatch alarms exist but are fleet-wide, not tenant/tier-aware.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "OOR-02",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Alarms and SLOs do not distinguish which tenant or tier is impacted — all fleet-wide averages.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "DPA-01",
+      "status": "met",
+      "confidence": "high",
+      "evidence_state": "confirmed",
+      "summary": "18 active CloudFormation stacks detected — strong signal of IaC-managed infrastructure.",
+      "source": "aws_discovery"
+    },
+    {
+      "control_id": "CAM-01",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "No cost allocation tags detected for tenant, tier, or product grouping.",
+      "source": "aws_discovery"
+    },
+    {
+      "control_id": "CAM-02",
+      "status": "missing",
+      "confidence": "medium",
+      "evidence_state": "confirmed",
+      "summary": "Usage-based pricing model confirmed, but no billing-grade tenant usage events (tenant + timestamp + unit) are captured.",
+      "source": "conversation"
+    },
+    {
+      "control_id": "SBR-01",
+      "status": "partial",
+      "confidence": "medium",
+      "evidence_state": "suggestive",
+      "summary": "Moving toward SaaS operating model but not fully there — still has elements of managed hosting per customer.",
+      "source": "conversation"
+    }
+  ]
+}
